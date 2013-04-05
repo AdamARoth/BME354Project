@@ -1,0 +1,141 @@
+TUTORIAL 4:
+/*
+Adam/Alexa/Kavitha/Tyler's First Program
+It's awesome! WOOOOO!!
+*/
+
+int ledPin = 13;
+
+void setup()
+{
+  //initialize the digital pins as outputs
+  pinMode(ledPin, OUTPUT);
+}
+
+void loop()
+{
+  digitalWrite(ledPin, HIGH);
+  delay(1000); //in milliseconds
+  digitalWrite(ledPin, LOW);
+  delay(1000);
+}
+
+TUTORIAL 5:
+/*
+Tutorial 5
+*/
+
+int switchPin = 8;
+int ledPin = 13;
+boolean lastButton = LOW;
+boolean currentButton = LOW;
+boolean ledOn = false;
+
+void setup()
+{
+  pinMode(switchPin, INPUT);
+  pinMode(ledPin, OUTPUT);
+}
+
+boolean debounce(boolean last)
+{
+  boolean current = digitalRead(switchPin);
+  if (last != current)
+  {
+   delay(5);
+  current = digitalRead(switchPin); 
+  }
+  return current;
+}
+
+void loop()
+{
+  currentButton = debounce(lastButton);
+  if (lastButton == LOW && currentButton == HIGH)
+  {
+   ledOn = !ledOn;
+  }
+  lastButton = currentButton;
+  digitalWrite(ledPin, ledOn);
+}
+
+TUTORIAL 7:
+//read sensor
+int sensePin =0;
+int ledPin=9;
+
+void setup() {
+ analogReference(DEFAULT); //isn't necessary
+ pinMode(ledPin, OUTPUT);
+  Serial.begin(9600); 
+}
+void loop() {
+   Serial.println(analogRead(sensePin));
+  delay(500); 
+}
+
+
+Second Part:
+
+//read sensor
+int sensePin =0;
+int ledPin=9;
+
+void setup() {
+ analogReference(DEFAULT); //isn't necessary
+ 
+ pinMode(ledPin, OUTPUT);
+}
+void loop() {
+  int val=analogRead(sensePin);
+  
+ val= constrain(val, 750, 900); 
+ int ledLevel= map(val, 750, 900, 255, 0);
+  
+  if(val < 800) digitalWrite(ledPin, HIGH);
+  else digitalWrite(ledPin, LOW);
+}
+
+
+
+Third Part
+
+//Define Pins
+int motionPin=0;
+int lightPin=1;
+int ledPin=9;
+
+//Distance Variables 
+int lastDist=0;
+int currentDist=0;
+
+//Threshold for Movement
+int thresh=200;
+
+void setup()
+
+{
+    //The LED pin needs to be set as an output
+    pinMode(ledPin,OUTPUT);
+}
+
+void loop()
+{
+    //read the sensor
+     int lightVal=analogRead(lightPin);
+     currentDist= analogRead(motionPin);
+     
+     //Does the current distance deviate from the last distance by more than the threshold?
+     if ((currentDist > lastDist + thresh || currentDist < lastDist - thresh) && lightVal < 800)
+     {
+        digitalWrite(ledPin,HIGH);
+        delay(1000);
+     }
+     else
+     {
+        digitalWrite(ledPin, LOW);
+     }
+     
+     lastDist= currentDist;
+     
+}
