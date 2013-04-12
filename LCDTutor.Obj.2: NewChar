@@ -27,17 +27,14 @@ byte thumbdown[8] = {
 };
 
 void setup() {
-  // create and write the thumb up and thumb down character to LCD
-  lcd.createChar(0,thumbup);
+  // create the thumb up and thumb down character
   lcd.begin(16,2);
-  lcd.write(byte(0));
-  
+  lcd.createChar(0,thumbup);  
   lcd.createChar(1,thumbdown);
-  lcd.begin(16,2);
-  lcd.write(byte(1));
 }
   
 void loop() {
+  // Write the character to LCD screen
   // Loop the animation of switching between thumb up and down
   lcd.write(byte(0));
   delay(1000);
