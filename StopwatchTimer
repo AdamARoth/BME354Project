@@ -1,11 +1,12 @@
-//Sample using LiquidCrystal library
+
 #include <LiquidCrystal.h>
 /*******************************************************
-This program will test the LCD panel and the buttons
-Mark Bramwell, July 2010
+This program will perform a stopwatch timer function
+Adam Roth, Tyler Hobbs, Kavitha Prasanna, Alexa Choy
+Thanks to Mark Bramwell, July 2010 for providing a template
 ********************************************************/
 // select the pins used on the LCD panel
-LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
+LiquidCrystal lcd(8, 9, 4, 5, 6, 7); 
 // define some values used by the panel and buttons
 int lcd_key = 0;
 int adc_key_in = 0;
@@ -13,18 +14,26 @@ int sensePin =0;
 int ledPin= 9;
 int timeMin = 0;
 int timeSec = 0;
+int countSelect = 0;
+String orient = "N"; // Tells us the state of the timer
+// If editing will be in U or D state
+// If timer active will be in T state
+// If no action N state
+// If changing value of modSec will be in R state
+// Updated by inputs from buttons
+boolean modSec = false; // Tells the device whether or not minutes or seconds are being edited
 #define btnRIGHT 0
 #define btnUP 1
 #define btnDOWN 2
 #define btnLEFT 3
 #define btnSELECT 4
 #define btnNONE 5
-#define V1 500
-#define V2 500
-#define V3 500
-#define V4 500
-#define V5 500
-#define VNONE 500
+#define V1 95
+#define V2 144
+#define V3 329
+#define V4 504
+#define V5 741
+#define VNONE 1000
 // read the buttons
 int read_LCD_buttons()
 {
@@ -32,10 +41,11 @@ adc_key_in = analogRead(0); // read the value from the sensor
 // my buttons when read are centered at these valies: 0, 144, 329, 504, 741
 // we add approx 50 to those values and check to see if we are close
 if (adc_key_in > VNONE) return btnNONE; // We make this the 1st option for speed reasons since if (adc_key_in < V1) return btnRIGHT;
-if (adc_key_in < V2) return btnUP;
-if (adc_key_in < V3) return btnDOWN;
-if (adc_key_in < V4) return btnLEFT;
-if (adc_key_in < V5) return btnSELECT;
+else if (adc_key_in < V1) return btnRIGHT;
+else if (adc_key_in < V2) return btnUP;
+else if (adc_key_in < V3) return btnDOWN;
+else if (adc_key_in < V4) return btnLEFT;
+else if (adc_key_in < V5) return btnSELECT;
 return btnNONE; // when all others fail, return this...
 }
 void setup()
@@ -47,77 +57,163 @@ void loop()
 { 
 lcd_key = read_LCD_buttons(); // read the buttons
 
-switch (lcd_key) // depending on which button was pushed, we perform an action
+switch (lcd_key) // depending on which button was pushed, we update orient unless in none case then actions are performed depending on state of system
 {
+//Changes whether or not minutes or seconds are being edited on the timer
 case btnRIGHT:
 {
-Serial.print("R");
+orient = "R";
 break;
 }
+//Starts timer function
 case btnLEFT:
 {
-Serial.print("L");
+orient = "T";
 break;
 }
+//Increments start time upward
 case btnUP:
 {
-Serial.print("U");
-timeSec = timeSec + 1;
-if (timeSec >= 60)
-{
-  timeMin = timeMin + 1;
-  timeSec = 0;
-}
-lcd.setCursor(0,0);
-String output = "Time ";
-output.concat(timeMin);
-output.concat(":");
-output.concat(timeSec);
-lcd.print(output);
-delay(1000);
+orient = "U";  
 break;
 }
+//Increments start time downward
 case btnDOWN:
 {
-timeSec = timeSec - 1;
-if (timeSec < 0)
-{
-  timeMin = timeMin - 1;
-  timeSec = 59;
-}
-if (timeMin < 0)
-{
-  timeMin = 0;
-  timeSec = 0;
-}
-lcd.setCursor(0,0);
-String output = "Time ";
-output.concat(timeMin);
-output.concat(":");
-output.concat(timeSec);
-lcd.print(output);
-delay(10);
+orient = "D";  
 break;
 }
+//Starts and stops both start time edits (up or down) and timer countdown
 case btnSELECT:
 {
-lcd.setCursor(0,0);
-String output = "Time ";
-output.concat(timeMin);
-output.concat(":");
-output.concat(timeSec);
-lcd.print(output);
+orient = "N";
 break;
 }
+// The location where functions are executed
 case btnNONE:
 {
-lcd.setCursor(0,0);
-String output = "Time ";
-output.concat(timeMin);
-output.concat(":");
-output.concat(timeSec);
-lcd.print(output);
-break;
+// Change the variable modSec which controls whether or not the timer is being modified in seconds or minutes
+if(orient == "R")
+{
+  if(modSec == false)
+  {
+     modSec = true;
+  }
+  else
+  {
+     modSec = false;
+  } 
+  delay(300);
+  orient = "N"; //Prevents continous switching between second and minute modification
+}
+// Increments start time of timer upward
+if(orient == "U")
+{ 
+   if(!modSec)
+   {
+      timeMin = timeMin + 1;
+   }
+   else
+   {
+      timeSec = timeSec + 10;
+      if(timeSec == 60)
+      {
+          timeSec = 0;
+      }
+   }
+  delay(700);
+}
+// Increments state time of timer downward to lower bound of 0
+if(orient == "D")
+{
+    if(!modSec)
+    {
+      timeMin = timeMin - 1;
+    }
+    else
+    {
+      timeSec = timeSec - 10;
+      if(timeSec == -1)
+      {
+        timeSec = 59;
+      }
+    }
+    if (timeMin < 0)
+    {
+      timeMin = 0;
+      timeSec = 0;
+    }
+  delay(700);
+}
+// Timer functionality of sketch
+if(orient == "T")
+{
+  delay(1000);  //Aproximately one second
+  timeSec = timeSec - 1;
+  if (timeSec < 0)
+  {
+    timeMin = timeMin - 1;
+    timeSec = 59;
+  }
+  //Time countdown finished case
+  // Flashes LCD on and off 3 times
+  if (timeMin <= 0 && timeSec <= 0)
+  {
+    timeMin = 0;
+    timeSec = 0;
+    lcd.setCursor(0,0);
+    for(int i = 0; i< 3;i++)
+    {
+      lcd.noDisplay();
+      delay(1000);
+      lcd.setCursor(0,0);
+      lcd.print("!!!TIME'S UP!!!");
+      lcd.display();
+      delay(1000);
+    }
+    orient = "N";
+    lcd.clear();
+  }
+}
+// Print updated time based on evaluation of above seet of if statements
+  lcd.setCursor(0,0);
+  String output = "Time ";
+  //Add zero to single digit
+  if(timeMin < 10)
+  {
+    output.concat("0"); 
+  }
+  output.concat(timeMin);
+  output.concat(":");
+  //Add zero to single digit
+  if(timeSec < 10)
+  {
+    output.concat("0");
+  }
+  output.concat(timeSec);
+  lcd.print(output);
+  //Write bottom row based on state of timer
+  String output2 = "Mode : ";
+  if(orient == "T")
+  {
+    output2.concat("Timer       ");
+  }
+  else
+  {
+    if(modSec)
+    {
+      output2.concat("Edit Sec");
+    }
+    else
+    {
+      output2.concat("Edit Min");
+    }
+  }
+  lcd.setCursor(0,1);
+  lcd.print(output2);
+  break;
+}
+
 }
 }
 }
