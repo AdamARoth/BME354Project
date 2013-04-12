@@ -9,10 +9,30 @@ byte thumbup[8] = {
   B01110,
   B00000,
 };
+byte thumbdown[8] = {
+  B00000,
+  B01110,
+  B01110,
+  B01110,
+  B00010,
+  B00100,
+  B00000,
+};
 
 void setup() {
   lcd.createChar(0,thumbup);
   lcd.begin(16,2);
   lcd.write(byte(0));
+  
+  lcd.createChar(1,thumbdown);
+  lcd.begin(16,2);
+  lcd.write(byte(1));
   }
-void loop() {}
+void loop() {
+lcd.write(byte(0));
+delay(1000);
+lcd.clear();
+lcd.write(byte(1));
+delay(1000);
+lcd.clear();
+}
