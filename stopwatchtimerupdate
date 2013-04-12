@@ -1,9 +1,8 @@
 //Sample using LiquidCrystal library
 #include <LiquidCrystal.h>
 /*******************************************************
-This program will perform Stopwatch and Timer functionality.
-Adam Roth, Kavitha Prasanna, Alexa Choy, Tyler Hobbs
-Also: Mark Bramwell, July 2010
+This program will test the LCD panel and the buttons
+Mark Bramwell, July 2010
 ********************************************************/
 // select the pins used on the LCD panel
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
@@ -14,6 +13,7 @@ int sensePin =0;
 int ledPin= 9;
 int timeMin = 0;
 int timeSec = 0;
+int countSelect = 0;
 String orient = "N";
 #define btnRIGHT 0
 #define btnUP 1
@@ -59,6 +59,7 @@ break;
 case btnLEFT:
 {
 Serial.print("L");
+orient = "T";
 break;
 }
 case btnUP:
@@ -73,12 +74,12 @@ break;
 }
 case btnSELECT:
 {
-orient = "N";  
+orient = "N";
 break;
 }
 case btnNONE:
 {
-delay(10);
+delay(50);
 if(orient == "U")
 {
 timeSec = timeSec + 1;
@@ -100,6 +101,26 @@ if (timeMin < 0)
 {
   timeMin = 0;
   timeSec = 0;
+}
+}
+if(orient == "T")
+{
+delay(700);  
+timeSec = timeSec - 1;
+if (timeSec < 0)
+{
+  timeMin = timeMin - 1;
+  timeSec = 59;
+}
+if (timeMin <= 0 && timeSec <= 0)
+{
+  timeMin = 0;
+  timeSec = 0;
+  lcd.setCursor(0,0);
+  lcd.print("!!!TIME'S UP!!!");
+  delay(2000);
+  orient = "N";
+  lcd.clear();
 }
 }
 lcd.setCursor(0,0);
