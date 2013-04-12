@@ -1,0 +1,44 @@
+/* SCROLL 'ACCELERATE AND DECELERATE' FUNCTION
+ LiquidCrystal Library - scrollDisplayLeft() and scrollDisplayRight()
+ Demonstrates the use a 16x2 LCD display.
+ This sketch prints "Hello World!" to the LCD and uses the
+ scrollDisplayLeft() and scrollDisplayRight() methods to scroll
+ the text.
+ Library originally added 18 Apr 2008 by David A. Mellis
+ library modified 5 Jul 2009 by Limor Fried, modified 22 Nov 2010 by Tom Igoe
+ 
+***MODIFIED BY ADAM ROTH, ALEXA CHOY, KAVITHA PRASANNA, TYLER HOBBS***
+*/
+
+// include the library code:
+#include <LiquidCrystal.h>
+
+// initialize the library with the numbers of the interface pins
+LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
+
+void setup() {
+  // set up the LCD's number of columns and rows: 
+  lcd.begin(16, 2);
+  // Print a message to the LCD.
+  lcd.print("Hello, World! :)");
+  delay(1000);
+}
+
+void loop() {
+  // scroll 12 positions to the left quickly
+  // to move it offscreen left:
+  for (int positionCounter = 0; positionCounter <12; positionCounter++) {
+    // scroll one position left:
+      lcd.scrollDisplayLeft();
+    // wait a bit:
+    delay(150);
+  }
+  
+ // scroll 8 positions to the left slowly for reading on LCD screen
+  for (int positionCounter = 0; positionCounter < 8; positionCounter++) {
+    // scroll one position left:
+      lcd.scrollDisplayLeft();
+    // wait a bit:
+    delay(400);
+  }
+}
