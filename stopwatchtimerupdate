@@ -13,6 +13,7 @@ int sensePin =0;
 int ledPin= 9;
 int timeMin = 0;
 int timeSec = 0;
+String orient = "N";
 #define btnRIGHT 0
 #define btnUP 1
 #define btnDOWN 2
@@ -61,23 +62,32 @@ break;
 }
 case btnUP:
 {
-Serial.print("U");
+orient = "U";  
+break;
+}
+case btnDOWN:
+{
+orient = "D";  
+break;
+}
+case btnSELECT:
+{
+orient = "N";  
+break;
+}
+case btnNONE:
+{
+delay(10);
+if(orient == "U")
+{
 timeSec = timeSec + 1;
 if (timeSec >= 60)
 {
   timeMin = timeMin + 1;
   timeSec = 0;
 }
-lcd.setCursor(0,0);
-String output = "Time ";
-output.concat(timeMin);
-output.concat(":");
-output.concat(timeSec);
-lcd.print(output);
-delay(200);
-break;
 }
-case btnDOWN:
+if(orient == "D")
 {
 timeSec = timeSec - 1;
 if (timeSec < 0)
@@ -90,31 +100,19 @@ if (timeMin < 0)
   timeMin = 0;
   timeSec = 0;
 }
-lcd.setCursor(0,0);
-String output = "Time ";
-output.concat(timeMin);
-output.concat(":");
-output.concat(timeSec);
-lcd.print(output);
-delay(200);
-break;
 }
-case btnSELECT:
-{
 lcd.setCursor(0,0);
 String output = "Time ";
-output.concat(timeMin);
-output.concat(":");
-output.concat(timeSec);
-lcd.print(output);
-break;
+if(timeMin < 10)
+{
+  output.concat("0");
 }
-case btnNONE:
-{
-lcd.setCursor(0,0);
-String output = "Time ";
 output.concat(timeMin);
 output.concat(":");
+if(timeSec < 10)
+{
+  output.concat("0");
+}
 output.concat(timeSec);
 lcd.print(output);
 break;
