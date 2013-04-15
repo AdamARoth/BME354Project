@@ -1,0 +1,37 @@
+/* Controlling the state of the heater based on current temperature
+CREATED BY ADAM ROTH, KAVITHA PRASANNA, ALEXA CHOY, TYLER HOBBS
+*/
+
+// include the library code:
+#include <LiquidCrystal.h>
+
+// initialize the library and select the pins used on the LCD panel
+LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
+
+// define some values used by the panel
+int setPoint = 30;
+int sensePin = 1;
+int heaterPin = 13;
+float temp;
+
+void setup()
+{
+  Serial.begin(9600);
+  lcd.begin(16, 2); // start the library
+}
+
+void heatControl()
+{
+   int val=analogRead(sensePin);
+   temp = val / 0.005;
+   if (temp < setPoint)
+   {
+     digitalWrite(heaterPin, HIGH);
+   }
+   else
+   {
+     digitalWrite(heaterPin, LOW); 
+   }
+}
+
+void loop(){}
