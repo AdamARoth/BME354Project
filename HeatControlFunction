@@ -5,31 +5,187 @@ CREATED BY ADAM ROTH, KAVITHA PRASANNA, ALEXA CHOY, TYLER HOBBS
 // include the library code:
 #include <LiquidCrystal.h>
 
+#define btnRIGHT 0
+#define btnUP 1
+#define btnDOWN 2
+#define btnLEFT 3
+#define btnSELECT 4
+#define btnNONE 5
+#define V1 95
+#define V2 144
+#define V3 329
+#define V4 504
+#define V5 741
+#define VNONE 1000
+int sensePin = 0;
+int lcd_key = 0;
+int adc_key_in = 0;
+int buttonDelayTime = 50;
+boolean btnUpAgn = false;
+boolean btnDownAgn = false;
+boolean btnSelAgn = false;
+
 // initialize the library and select the pins used on the LCD panel
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
 
 // define some values used by the panel
-int setPoint = 30;
-int sensePin = 1;
+int setPoint = 120;
+int maxPoint = 275;
+int minPoint = 80;
+int warnPoint = 250;
+int possibleTemp = setPoint;
 int heaterPin = 13;
 float temp;
+
+// read the buttons
+int read_LCD_buttons()
+{
+  adc_key_in = analogRead(0); // read the value from the sensor
+    // my buttons when read are centered at these valies: 0, 144, 329, 504, 741
+    // we add approx 50 to those values and check to see if we are close
+  if (adc_key_in > VNONE) return btnNONE;
+  else if (adc_key_in < V1) return btnRIGHT;
+  else if (adc_key_in < V2) return btnUP;
+  else if (adc_key_in < V3) return btnDOWN;
+  else if (adc_key_in < V4) return btnLEFT;
+  else if (adc_key_in < V5) return btnSELECT;
+  return btnNONE; // when all others fail, return this...
+}
 
 void setup()
 {
   Serial.begin(9600);
   lcd.begin(16, 2); // start the library
 }
-
+void loop()
+{
+  tempSelect();
+}
 void heatControl()
 {
    int val=analogRead(sensePin);
    temp = val / 0.005;
+   if (temp >= warnPoint && temp < maxPoint)
+   {
+      lcd.setCursor(0,0);
+      lcd.print("!WARNING!") ;  
+      lcd.setCursor(0,1);
+      lcd.print("!TEMP TOO HIGH!");
+   }
+   else if (temp >= maxPoint)
+   {
+      digitalWrite(heaterPin,LOW);
+      lcd.setCursor(0,0);
+      lcd.print("!HEATER OFF!");
+      lcd.setCursor(0,1);
+      lcd.print("!TEMP TOO HIGH!");
+       return;
+   }
    if (temp < setPoint)
    {
      digitalWrite(heaterPin, HIGH);
    }
    else
    {
+     digitalWrite(heaterPin, LOW); 
+   }
+}
+void tempSelect()
+{
+    lcd.setCursor(0,0);
+    lcd.print("Edit Set Point m");
+    lcd.setCursor(0,1);
+    String temp = "";
+    temp.concat(possibleTemp);
+    temp.concat(" °C");
+    lcd.print(temp);
+    lcd_key = read_LCD_buttons();
+   switch(lcd_key)
+   {
+     case btnDOWN:
+     {
+       if(btnDownAgn)
+       {
+         possibleTemp = possibleTemp - 1;
+         btnDownAgn = false;
+       }
+       else
+       {
+         btnDownAgn = true;
+       }
+       delay(buttonDelayTime);
+       break;
+     }
+     case btnUP:
+     {
+       if(btnUpAgn)
+       {
+         possibleTemp = possibleTemp + 1;
+         btnUpAgn = false;
+       }
+       else
+       {
+         btnUpAgn = true;
+       }
+       delay(buttonDelayTime);
+       break;
+     }
+     case btnSELECT:
+     {
+       if(btnSelAgn)
+       {
+         if(possibleTemp > warnPoint)
+         {
+           lcd.setCursor(0,0);
+           lcd.print("Temp Too High!");
+           lcd.setCursor(0,1);
+           lcd.print("Please Set Lower");
+           delay(3000);
+           possibleTemp = warnPoint;
+         }
+         else if(possibleTemp < minPoint)
+         {
+           lcd.setCursor(0,0);
+           lcd.print("Temp Too Low!");
+           lcd.setCursor(0,1);
+           lcd.print("Please Set Higher");
+           delay(3000);
+           possibleTemp = minPoint;
+         }  
+         else
+         {
+           setPoint = possibleTemp;
+           lcd.setCursor(0,0);
+           lcd.print("New Set Point");
+           lcd.setCursor(0,1);
+           lcd.print("Temperature: ");
+           lcd.print(setPoint);
+           lcd.print(" °C");
+         }
+         btnSelAgn = false;
+       }
+       else
+       {
+         btnSelAgn = true;
+       }
+       delay(10*buttonDelayTime);
+       break;
+     }
+     case btnLEFT:
+     {
+       break;
+     }
+     case btnRIGHT:
+     {
+       break;
+     }
+     case btnNONE:
+     {
+        break;
+        lcd.clear();
+     }
+}
+}
      digitalWrite(heaterPin, LOW); 
    }
 }
