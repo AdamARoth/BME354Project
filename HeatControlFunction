@@ -51,11 +51,8 @@ int read_LCD_buttons()
   else if (adc_key_in < V5) return btnSELECT;
   return btnNONE; // when all others fail, return this...
 }
-
-void setup()
+void startUpMessage()
 {
-  Serial.begin(9600);
-  lcd.begin(16, 2); // start the library
   lcd.setCursor(0,0);
   lcd.print("POWER ON");
   delay(1000);
@@ -73,60 +70,22 @@ void setup()
   lcd.print("   LLC, N. A.   ");
   lcd.setCursor(0,1);
   lcd.print("Patent Pending  ");
-  delay(2000);
-  tempSelect();
+  delay(2000); 
 }
-
+void setup()
+{
+  Serial.begin(9600);
+  lcd.begin(16, 2); // start the library
+  startUpMessage();
+}
 void loop()
 {
-//  switch(lcd_key)
-//  {
-//    case btnSELECT:
-//      {
-//        if(btnSelAgn)
-//        {
-//          tempSelect();
-//          btnSelAgn = false;
-//        }
-//        else
-//        {
-//          btnSelAgn = true;
-//        }
-//        delay(buttonDelayTime);
-//        break;
-//      }
-//    case btnUP:
-//      {
-//          break;
-//      }
-//    case btnDOWN:
-//      {
-//          break;
-//      }
-//    case btnLEFT:
-//      {
-//          break;
-//      }
-//    case btnRIGHT:
-//      {
-//          break;
-//      }
-//    case btnNONE:
-//      {
-//          break;
-//      } 
-//  }
-  heatControl();
-  delay(2000);
   displayTemp();
-  delay(2000);
-  
 }
 void heatControl()
 {
    int val=analogRead(sensePin);
    curTemp = val / 0.005;
-   lcd.clear();
    if (curTemp >= warnPoint && curTemp < maxPoint)
    {
       lcd.setCursor(0,0);
@@ -222,7 +181,7 @@ void tempSelect()
            lcd.setCursor(0,1);
            lcd.print("Temp:  ");
            lcd.print(setPoint);
-           lcd.print(" degC");
+           lcd.print(" Deg C");
          }
          btnSelAgn = false;
        }
@@ -246,17 +205,16 @@ void tempSelect()
         break;
         lcd.clear();
      }
-  }
 }
-
+}
 void displayTemp()
 {
   lcd.setCursor(0,0);
-  lcd.print("CurTemp= ");
+  lcd.print("Cur Temp: ");
   lcd.print(curTemp);
-  lcd.print(" degC");
+  lcd.print(" C");
   lcd.setCursor(0,1);
-  lcd.print("SetTemp= ");
+  lcd.print("Set Temp: ");
   lcd.print(setPoint);
-  lcd.print(" degC");
+  lcd.print(" C");
 }
