@@ -20,7 +20,7 @@ CREATED BY ADAM ROTH, KAVITHA PRASANNA, ALEXA CHOY, TYLER HOBBS
 int sensePin = 0;
 int lcd_key = 0;
 int adc_key_in = 0;
-int buttonDelayTime = 50;
+int buttonDelayTime = 75;
 boolean btnUpAgn = false;
 boolean btnDownAgn = false;
 boolean btnSelAgn = false;
@@ -35,7 +35,7 @@ int minPoint = 80;
 int warnPoint = 250;
 int possibleTemp = setPoint;
 int heaterPin = 13;
-float temp;
+float curTemp;
 
 // read the buttons
 int read_LCD_buttons()
@@ -73,24 +73,68 @@ void setup()
   lcd.print("   LLC, N. A.   ");
   lcd.setCursor(0,1);
   lcd.print("Patent Pending  ");
-  delay(2000); 
+  delay(2000);
+  tempSelect();
 }
+
 void loop()
 {
-  tempSelect();
+//  switch(lcd_key)
+//  {
+//    case btnSELECT:
+//      {
+//        if(btnSelAgn)
+//        {
+//          tempSelect();
+//          btnSelAgn = false;
+//        }
+//        else
+//        {
+//          btnSelAgn = true;
+//        }
+//        delay(buttonDelayTime);
+//        break;
+//      }
+//    case btnUP:
+//      {
+//          break;
+//      }
+//    case btnDOWN:
+//      {
+//          break;
+//      }
+//    case btnLEFT:
+//      {
+//          break;
+//      }
+//    case btnRIGHT:
+//      {
+//          break;
+//      }
+//    case btnNONE:
+//      {
+//          break;
+//      } 
+//  }
+  heatControl();
+  delay(2000);
+  displayTemp();
+  delay(2000);
+  
 }
 void heatControl()
 {
    int val=analogRead(sensePin);
-   temp = val / 0.005;
-   if (temp >= warnPoint && temp < maxPoint)
+   curTemp = val / 0.005;
+   lcd.clear();
+   if (curTemp >= warnPoint && curTemp < maxPoint)
    {
       lcd.setCursor(0,0);
       lcd.print("!WARNING!") ;  
       lcd.setCursor(0,1);
       lcd.print("!TEMP TOO HIGH!");
    }
-   else if (temp >= maxPoint)
+   else if (curTemp >= maxPoint)
    {
       digitalWrite(heaterPin,LOW);
       lcd.setCursor(0,0);
@@ -99,7 +143,7 @@ void heatControl()
       lcd.print("!TEMP TOO HIGH!");
        return;
    }
-   if (temp < setPoint)
+   if (curTemp < setPoint)
    {
      digitalWrite(heaterPin, HIGH);
    }
@@ -178,7 +222,7 @@ void tempSelect()
            lcd.setCursor(0,1);
            lcd.print("Temp:  ");
            lcd.print(setPoint);
-           lcd.print(" Deg C");
+           lcd.print(" degC");
          }
          btnSelAgn = false;
        }
@@ -202,5 +246,17 @@ void tempSelect()
         break;
         lcd.clear();
      }
+  }
 }
+
+void displayTemp()
+{
+  lcd.setCursor(0,0);
+  lcd.print("CurTemp= ");
+  lcd.print(curTemp);
+  lcd.print(" degC");
+  lcd.setCursor(0,1);
+  lcd.print("SetTemp= ");
+  lcd.print(setPoint);
+  lcd.print(" degC");
 }
