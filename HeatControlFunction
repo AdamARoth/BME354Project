@@ -56,6 +56,24 @@ void setup()
 {
   Serial.begin(9600);
   lcd.begin(16, 2); // start the library
+  lcd.setCursor(0,0);
+  lcd.print("POWER ON");
+  delay(1000);
+  lcd.setCursor(0,0);
+  lcd.print("WELCOME TO THE");
+  lcd.setCursor(0,1);
+  lcd.print("KAAT SOLDER OVEN");
+  delay(2000);
+  lcd.setCursor(0,0);
+  lcd.print("THE LATEST FROM ");
+  lcd.setCursor(0,1);
+  lcd.print("KAAT INDUSTRIES ");
+  delay(2000);  
+  lcd.setCursor(0,0);
+  lcd.print("   LLC, N. A.   ");
+  lcd.setCursor(0,1);
+  lcd.print("Patent Pending  ");
+  delay(2000); 
 }
 void loop()
 {
@@ -93,11 +111,11 @@ void heatControl()
 void tempSelect()
 {
     lcd.setCursor(0,0);
-    lcd.print("Edit Set Point m");
+    lcd.print("Edit Set Point  ");
     lcd.setCursor(0,1);
     String temp = "";
     temp.concat(possibleTemp);
-    temp.concat(" °C");
+    temp.concat(" Deg C       ");
     lcd.print(temp);
     lcd_key = read_LCD_buttons();
    switch(lcd_key)
@@ -137,7 +155,7 @@ void tempSelect()
          if(possibleTemp > warnPoint)
          {
            lcd.setCursor(0,0);
-           lcd.print("Temp Too High!");
+           lcd.print("Temp Too High!  ");
            lcd.setCursor(0,1);
            lcd.print("Please Set Lower");
            delay(3000);
@@ -146,7 +164,7 @@ void tempSelect()
          else if(possibleTemp < minPoint)
          {
            lcd.setCursor(0,0);
-           lcd.print("Temp Too Low!");
+           lcd.print("Temp Too Low!    ");
            lcd.setCursor(0,1);
            lcd.print("Please Set Higher");
            delay(3000);
@@ -158,9 +176,9 @@ void tempSelect()
            lcd.setCursor(0,0);
            lcd.print("New Set Point");
            lcd.setCursor(0,1);
-           lcd.print("Temperature: ");
+           lcd.print("Temp:  ");
            lcd.print(setPoint);
-           lcd.print(" °C");
+           lcd.print(" Deg C");
          }
          btnSelAgn = false;
        }
@@ -186,8 +204,3 @@ void tempSelect()
      }
 }
 }
-     digitalWrite(heaterPin, LOW); 
-   }
-}
-
-void loop(){}
