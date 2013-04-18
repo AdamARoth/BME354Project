@@ -24,6 +24,9 @@ int buttonDelayTime = 75;
 boolean btnUpAgn = false;
 boolean btnDownAgn = false;
 boolean btnSelAgn = false;
+boolean btnRightAgn = false;
+boolean optionsMode = false;
+boolean setMode = false;
 
 // initialize the library and select the pins used on the LCD panel
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
@@ -35,6 +38,7 @@ int minPoint = 80;
 int warnPoint = 250;
 int possibleTemp = setPoint;
 int heaterPin = 13;
+int index = 0;
 float curTemp;
 
 // read the buttons
@@ -71,16 +75,72 @@ void startUpMessage()
   lcd.setCursor(0,1);
   lcd.print("Patent Pending  ");
   delay(2000); 
+  lcd.setCursor(0,0);
+  lcd.print("Press Right For ");
+  lcd.setCursor(0,1);
+  lcd.print("Options Menu    ");
+  delay(2000);
 }
 void setup()
 {
   Serial.begin(9600);
   lcd.begin(16, 2); // start the library
-  //startUpMessage();
+  startUpMessage();
 }
 void loop()
 {
-  optionsMenu();
+  lcd_key = read_LCD_buttons();
+  if(!optionsMode)
+  {
+    switch(lcd_key)
+     {
+         case btnDOWN:
+         {
+           break;
+         }
+         case btnUP:
+         {
+           break;
+         }
+         case btnSELECT:
+         {
+           break;
+         }
+         case btnLEFT:
+         {
+           break;
+         }
+         case btnRIGHT:
+         {
+           if(btnRightAgn)
+           {
+             optionsMode = true;
+             btnRightAgn = false;
+           }
+           else
+           {
+             btnRightAgn = true;
+           }
+           delay(2*buttonDelayTime);
+           break;
+         }
+         case btnNONE:
+         {
+           if(setMode)
+           {
+             tempSelect();
+           }
+           else
+           {
+             heatControl();
+           }
+         }
+   }
+  }
+  else
+  {
+    optionsMenu();
+  }
 }
 void heatControl()
 {
@@ -120,7 +180,7 @@ void tempSelect()
     lcd.setCursor(0,1);
     String temp = "";
     temp.concat(possibleTemp);
-    temp.concat(" Deg C       ");
+    temp.concat(" Deg C        ");
     lcd.print(temp);
     lcd_key = read_LCD_buttons();
    switch(lcd_key)
@@ -184,6 +244,7 @@ void tempSelect()
            lcd.print("Temp:  ");
            lcd.print(setPoint);
            lcd.print(" Deg C");
+           setMode = false;
          }
          btnSelAgn = false;
        }
@@ -214,21 +275,19 @@ void displayTemp()
   lcd.setCursor(0,0);
   lcd.print("Cur Temp: ");
   lcd.print(curTemp);
-  lcd.print(" C");
+  lcd.print(" C      ");
   lcd.setCursor(0,1);
   lcd.print("Set Temp: ");
   lcd.print(setPoint);
-  lcd.print(" C");
+  lcd.print(" C      ");
 }
 void optionsMenu()
 { 
-  String options[3] = {
-    "Temp Select",
-    "Run Reflow",
-    "Print Data"
-  };
+  char* options[] = {
+    "Temp Select    ",
+    "Run Reflow     ",
+    "Print Data     "};
   int optionsSize = 3;
-  int index = 0;
   lcd_key = read_LCD_buttons();
   switch(lcd_key)
    {
@@ -273,7 +332,11 @@ void optionsMenu()
        if(btnSelAgn)
        {
          btnSelAgn = false;
-         
+         if(index == 0)
+         {
+           setMode = true;
+         }
+         optionsMode = false;
        }
        else
        {
@@ -293,11 +356,12 @@ void optionsMenu()
      case btnNONE:
      {
          lcd.setCursor(0,0);
-         lcd.print("Select a Mode");
+         lcd.print("Select a Mode   ");
          lcd.setCursor(0,1);
          lcd.print(options[index]);
- 
-      break;
+         break;
      }
 }
 }
+
+
