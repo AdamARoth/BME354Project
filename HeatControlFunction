@@ -76,11 +76,11 @@ void setup()
 {
   Serial.begin(9600);
   lcd.begin(16, 2); // start the library
-  startUpMessage();
+  //startUpMessage();
 }
 void loop()
 {
-  displayTemp();
+  optionsMenu();
 }
 void heatControl()
 {
@@ -89,7 +89,7 @@ void heatControl()
    if (curTemp >= warnPoint && curTemp < maxPoint)
    {
       lcd.setCursor(0,0);
-      lcd.print("!WARNING!") ;  
+      lcd.print("!WARNING!      ") ;  
       lcd.setCursor(0,1);
       lcd.print("!TEMP TOO HIGH!");
    }
@@ -97,10 +97,10 @@ void heatControl()
    {
       digitalWrite(heaterPin,LOW);
       lcd.setCursor(0,0);
-      lcd.print("!HEATER OFF!");
+      lcd.print("!HEATER OFF!    ");
       lcd.setCursor(0,1);
-      lcd.print("!TEMP TOO HIGH!");
-       return;
+      lcd.print("!TEMP TOO HIGH! ");
+      delay(2000);
    }
    if (curTemp < setPoint)
    {
@@ -110,6 +110,8 @@ void heatControl()
    {
      digitalWrite(heaterPin, LOW); 
    }
+   displayTemp();
+   delay(2000);
 }
 void tempSelect()
 {
@@ -217,4 +219,85 @@ void displayTemp()
   lcd.print("Set Temp: ");
   lcd.print(setPoint);
   lcd.print(" C");
+}
+void optionsMenu()
+{ 
+  String options[3] = {
+    "Temp Select",
+    "Run Reflow",
+    "Print Data"
+  };
+  int optionsSize = 3;
+  int index = 0;
+  lcd_key = read_LCD_buttons();
+  switch(lcd_key)
+   {
+     case btnDOWN:
+     {
+       if(btnDownAgn)
+       {
+         index = index + 1;
+         if(index >= optionsSize)
+         {
+             index = 0;
+         }
+         btnDownAgn = false;
+       }
+       else
+       {
+         btnDownAgn = true;
+       }
+       delay(buttonDelayTime);
+       break;
+     }
+     case btnUP:
+     {
+       if(btnUpAgn)
+       {
+         index = index - 1;
+         if(index < 0)
+         {
+           index = optionsSize - 1;
+         }
+         btnUpAgn = false;
+       }
+       else
+       {
+         btnUpAgn = true;
+       }
+       delay(buttonDelayTime);
+       break;
+     }
+     case btnSELECT:
+     {
+       if(btnSelAgn)
+       {
+         btnSelAgn = false;
+         
+       }
+       else
+       {
+         btnSelAgn = true;
+       }
+       delay(10*buttonDelayTime);
+       break;
+     }
+     case btnLEFT:
+     {
+       break;
+     }
+     case btnRIGHT:
+     {
+       break;
+     }
+     case btnNONE:
+     {
+         lcd.setCursor(0,0);
+         lcd.print("Select a Mode");
+         lcd.setCursor(0,1);
+         lcd.print(options[index]);
+ 
+      break;
+     }
+}
 }
