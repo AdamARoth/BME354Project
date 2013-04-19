@@ -17,7 +17,7 @@ CREATED BY ADAM ROTH, KAVITHA PRASANNA, ALEXA CHOY, TYLER HOBBS
 #define V4 504
 #define V5 741
 #define VNONE 1000
-int sensePin = 0;
+int sensePin = A5;
 int lcd_key = 0;
 int adc_key_in = 0;
 int buttonDelayTime = 75;
@@ -57,24 +57,24 @@ int read_LCD_buttons()
 }
 void startUpMessage()
 {
-  lcd.setCursor(0,0);
-  lcd.print("POWER ON");
-  delay(1000);
-  lcd.setCursor(0,0);
-  lcd.print("WELCOME TO THE");
-  lcd.setCursor(0,1);
-  lcd.print("KAAT SOLDER OVEN");
-  delay(2000);
-  lcd.setCursor(0,0);
-  lcd.print("THE LATEST FROM ");
-  lcd.setCursor(0,1);
-  lcd.print("KAAT INDUSTRIES ");
-  delay(2000);  
-  lcd.setCursor(0,0);
-  lcd.print("   LLC, N. A.   ");
-  lcd.setCursor(0,1);
-  lcd.print("Patent Pending  ");
-  delay(2000); 
+//  lcd.setCursor(0,0);
+//  lcd.print("POWER ON");
+//  delay(1000);
+//  lcd.setCursor(0,0);
+//  lcd.print("WELCOME TO THE");
+//  lcd.setCursor(0,1);
+//  lcd.print("KAAT SOLDER OVEN");
+//  delay(2000);
+//  lcd.setCursor(0,0);
+//  lcd.print("THE LATEST FROM ");
+//  lcd.setCursor(0,1);
+//  lcd.print("KAAT INDUSTRIES ");
+//  delay(2000);  
+//  lcd.setCursor(0,0);
+//  lcd.print("   LLC, N. A.   ");
+//  lcd.setCursor(0,1);
+//  lcd.print("Patent Pending  ");
+//  delay(2000); 
   lcd.setCursor(0,0);
   lcd.print("Press Right For ");
   lcd.setCursor(0,1);
@@ -145,21 +145,25 @@ void loop()
 void heatControl()
 {
    int val=analogRead(sensePin);
-   curTemp = val / 0.005;
+   curTemp = val *.00489 / 0.005;
+   Serial.print(val);
+   Serial.println();
    if (curTemp >= warnPoint && curTemp < maxPoint)
    {
       lcd.setCursor(0,0);
-      lcd.print("!WARNING!      ") ;  
+      lcd.clear();
+      lcd.print("WARNING!") ;  
       lcd.setCursor(0,1);
-      lcd.print("!TEMP TOO HIGH!");
+      lcd.print("TEMP HIGH!");
    }
    else if (curTemp >= maxPoint)
    {
       digitalWrite(heaterPin,LOW);
       lcd.setCursor(0,0);
-      lcd.print("!HEATER OFF!    ");
+      lcd.clear();
+      lcd.print("HEATER OFF!");
       lcd.setCursor(0,1);
-      lcd.print("!TEMP TOO HIGH! ");
+      lcd.print("TEMP TOO HIGH! ");
       delay(2000);
    }
    if (curTemp < setPoint)
@@ -363,5 +367,3 @@ void optionsMenu()
      }
 }
 }
-
-
