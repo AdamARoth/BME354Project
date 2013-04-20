@@ -1,0 +1,21 @@
+//Need to figure out pointers in Arduino
+void setReflowPoint(int initMin, int initSec, int initTemp)
+{
+  boolean select = false;
+  int index = 0;
+  int tempMin = initMin;
+  int tempSec = initSec;
+  int tempTemp = initTemp;
+  int[3] variables = {tempMin, tempSec, tempTemp};
+  while(!select)
+  {
+    
+  }
+  //Reassigns modified values to original values
+  initMin = tempMin;
+  initSec = tempSec;
+  initTemp = tempTemp;
+  
+}
+  
+  
