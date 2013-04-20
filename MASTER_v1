@@ -1,5 +1,4 @@
-/* MASTER ARDUINO PROJECT CODE
-- ALL code is called into this script
+/* Controlling the state of the heater based on current temperature
  CREATED BY ADAM ROTH, KAVITHA PRASANNA, ALEXA CHOY, TYLER HOBBS
 */
 
@@ -20,17 +19,15 @@
 #define V5 741
 #define VNONE 1000
 #define optionsSize 3
-#define buttonDelayTime 50
+//#define buttonDelayTime 50
 #define minPoint 80
 #define heaterPin 2
 #define sensePin 5
+#define debounceDelay 100
 
 int lcd_key = 0;
 int adc_key_in = 0;
-boolean btnUpAgn = false;
-boolean btnDownAgn = false;
-boolean btnSelAgn = false;
-boolean btnRightAgn = false;
+long lastDebounceTime = 0;
 boolean optionsMode = false;
 boolean setMode = false;
 float curTemp;
@@ -58,38 +55,25 @@ void loop()
   {
     switch(lcd_key)
     {
-    case btnDOWN:
-      {break;}
-    case btnUP:
-      {break;}
-    case btnSELECT:
-      {break;}
-    case btnLEFT:
-      {break;}
     case btnRIGHT:
       {
-        if(btnRightAgn)
-        {
-          optionsMode = true;
-          btnRightAgn = false;
-        }
-        else
-        {
-          btnRightAgn = true;
-        }
-        delay(buttonDelayTime);
+        optionsMode = true;
         break;
       }
     case btnNONE:
       {
         if(setMode)
         {
-          tempSelect();
+         // tempSelect();
         }
         else
         {
-          tempcontdisp.heatControl(sensePin,setPoint);
+         // tempcontdisp.heatControl(sensePin,setPoint);
         }
+      }
+    default:
+      {
+        break;
       }
     }
   }
@@ -102,75 +86,51 @@ void loop()
 void optionsMenu()
 { 
   String options[3] = {
-    "Temp Select    ",
-    "Run Reflow     ",
-    "Print Data     "  };
+    "Temp Select",
+    "Run Reflow",
+    "Print Data"      };
   lcd_key = read_LCD_buttons();
   switch(lcd_key)
   {
   case btnDOWN:
     {
-      if(btnDownAgn)
+      index = index + 1;
+      if(index >= optionsSize)
       {
-        index = index + 1;
-
-        if(index >= optionsSize)
-        {
-          index = 0;
-        }
-        btnDownAgn = false;
-      }
-      else
-      {
-        btnDownAgn = true;
-      }
-      delay(buttonDelayTime);
+        index = 0;
+      } 
+      lcd.clear();     
       break;
     }
   case btnUP:
     {
-      if(btnUpAgn)
+      index = index - 1;
+      if(index < 0)
       {
-        index = index - 1;
-        if(index < 0)
-        {
-          index = optionsSize - 1;
-        }
-        btnUpAgn = false;
+        index = optionsSize - 1;
       }
-      else
-      {
-        btnUpAgn = true;
-      }
-      delay(buttonDelayTime);
+      lcd.clear();
       break;
     }
   case btnSELECT:
     {
-      if(btnSelAgn)
+      if(index == 0)
       {
-        btnSelAgn = false;
-        if(index == 0)
-        {
-          setMode = true;
-        }
-        optionsMode = false;
+        setMode = true;
       }
-      else
-      {
-        btnSelAgn = true;
-      }
-      delay(10*buttonDelayTime);
+      optionsMode = false;
       break;
     }
-  case btnLEFT:  {break;}
-  case btnRIGHT: {break;}
   case btnNONE:
     {
       lcd.setCursor(0,0);
-      lcd.print("Select a Mode   ");
+      lcd.print("Select a Mode");
       lcd.setCursor(0,1);
       lcd.print(options[index]);
+      break;
+    }
+  default:
+    {
       break;
     }
   }
