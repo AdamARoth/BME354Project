@@ -1,0 +1,177 @@
+/* MASTER ARDUINO PROJECT CODE
+- ALL code is called into this script
+ CREATED BY ADAM ROTH, KAVITHA PRASANNA, ALEXA CHOY, TYLER HOBBS
+*/
+
+// include the library code:
+#include <LiquidCrystal.h>
+#include <TempContDisp.h>
+
+#define btnRIGHT 0
+#define btnUP 1
+#define btnDOWN 2
+#define btnLEFT 3
+#define btnSELECT 4
+#define btnNONE 5
+#define V1 95
+#define V2 144
+#define V3 329
+#define V4 504
+#define V5 741
+#define VNONE 1000
+#define optionsSize 3
+#define buttonDelayTime 50
+#define minPoint 80
+#define heaterPin 2
+#define sensePin 5
+
+int lcd_key = 0;
+int adc_key_in = 0;
+boolean btnUpAgn = false;
+boolean btnDownAgn = false;
+boolean btnSelAgn = false;
+boolean btnRightAgn = false;
+boolean optionsMode = false;
+boolean setMode = false;
+float curTemp;
+int setPoint = 120;
+
+// initialize the library and select the pins used on the LCD panel
+LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
+TempContDisp tempcontdisp(sensePin, setPoint, curTemp);
+
+// define some values used by the panel
+int possibleTemp = setPoint;
+int index = 0;
+
+void setup()
+{
+  Serial.begin(9600);
+  lcd.begin(16, 2); // start the library
+  pinMode(heaterPin,OUTPUT);
+  startUpMessage();
+}
+void loop()
+{
+  lcd_key = read_LCD_buttons();
+  if(!optionsMode)
+  {
+    switch(lcd_key)
+    {
+    case btnDOWN:
+      {break;}
+    case btnUP:
+      {break;}
+    case btnSELECT:
+      {break;}
+    case btnLEFT:
+      {break;}
+    case btnRIGHT:
+      {
+        if(btnRightAgn)
+        {
+          optionsMode = true;
+          btnRightAgn = false;
+        }
+        else
+        {
+          btnRightAgn = true;
+        }
+        delay(buttonDelayTime);
+        break;
+      }
+    case btnNONE:
+      {
+        if(setMode)
+        {
+          tempSelect();
+        }
+        else
+        {
+          tempcontdisp.heatControl(sensePin,setPoint);
+        }
+      }
+    }
+  }
+  else
+  {
+    optionsMenu();
+  }
+}
+
+void optionsMenu()
+{ 
+  String options[3] = {
+    "Temp Select    ",
+    "Run Reflow     ",
+    "Print Data     "  };
+  lcd_key = read_LCD_buttons();
+  switch(lcd_key)
+  {
+  case btnDOWN:
+    {
+      if(btnDownAgn)
+      {
+        index = index + 1;
+
+        if(index >= optionsSize)
+        {
+          index = 0;
+        }
+        btnDownAgn = false;
+      }
+      else
+      {
+        btnDownAgn = true;
+      }
+      delay(buttonDelayTime);
+      break;
+    }
+  case btnUP:
+    {
+      if(btnUpAgn)
+      {
+        index = index - 1;
+        if(index < 0)
+        {
+          index = optionsSize - 1;
+        }
+        btnUpAgn = false;
+      }
+      else
+      {
+        btnUpAgn = true;
+      }
+      delay(buttonDelayTime);
+      break;
+    }
+  case btnSELECT:
+    {
+      if(btnSelAgn)
+      {
+        btnSelAgn = false;
+        if(index == 0)
+        {
+          setMode = true;
+        }
+        optionsMode = false;
+      }
+      else
+      {
+        btnSelAgn = true;
+      }
+      delay(10*buttonDelayTime);
+      break;
+    }
+  case btnLEFT:  {break;}
+  case btnRIGHT: {break;}
+  case btnNONE:
+    {
+      lcd.setCursor(0,0);
+      lcd.print("Select a Mode   ");
+      lcd.setCursor(0,1);
+      lcd.print(options[index]);
+      break;
+    }
+  }
+}
