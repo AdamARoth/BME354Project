@@ -6,10 +6,105 @@ void setReflowPoint(int initMin, int initSec, int initTemp)
   int tempMin = initMin;
   int tempSec = initSec;
   int tempTemp = initTemp;
-  int[3] variables = {tempMin, tempSec, tempTemp};
-  while(!select)
+  int variables[3] = {tempMin, tempSec, tempTemp};
+
+switch (lcd_key)
+      case btnLEFT: //switch to previous mode
+    {
+      index=index-1;
+      if(index < 0)
+      {
+        index= variablesSize - 1;
+      }
+      lcd.clear();
+      break;
+    }
+    case btnRIGHT: //switch to next mode
+     {  
+      index=index+1;
+      if(index >= variablesSize)
+      {
+        index=0;
+      }
+      lcd.clear();
+      break;
+     }
+
   {
-    
+       case btnUP:     //increment up
+    {
+        orient = "U";  
+        break;
+    }
+    case btnDOWN:    //increment down
+    {
+        orient = "D";  
+        break;
+    }
+    case btnSELECT:  //enter and continue
+    {
+        orient = "N";
+        break;
+    }
+
+    case btnNONE:    // The location where functions are executed
+    {
+        // Change the variable modSec which controls whether the timer is being modified in seconds or minutes
+        if(orient == "R")
+        {
+          if(!modSec)
+          {
+             modSec = true;
+          }
+          else
+          {
+             modSec = false;
+          } 
+          delay(300);
+          orient = "N"; //Prevents continous switching between second and minute modification
+        }
+
+  while(!select)
+   {
+        if(orient == "U")
+        {
+           if(!modSec)
+           {
+              timeMin = timeMin + 1;
+           }
+           else
+           {
+              timeSec = timeSec + 10;
+              if(timeSec == 60)
+              {
+                  timeSec = 0;
+              }
+           }
+          delay(700);
+        }
+        
+        if(orient == "D")
+        
+       {
+         if(!modsec)
+         {
+           timeMin = timeMin - 1
+              }
+            else
+            {
+              timeSec = timeSec - 10;
+              if(timeSec == -1)
+              {
+                timeSec = 59;
+              }
+            }
+            if (timeMin < 0)
+            {
+              timeMin = 0;
+              timeSec = 0;
+            }
+          delay(700);
+        }   
   }
   //Reassigns modified values to original values
   initMin = tempMin;
@@ -17,5 +112,41 @@ void setReflowPoint(int initMin, int initSec, int initTemp)
   initTemp = tempTemp;
   
 }
-  
+
+lcd.setCursor(0,0);
+          lcd.print("Time Pt 1: ");
+          //Add zero to single digit of min
+          if(timeMin < 10)
+          {
+            output.concat("0"); 
+          }
+          output.concat(timeMin);
+          output.concat(":");
+          //Add zero to single digit of sec
+          if(timeSec < 10)
+          {
+            output.concat("0");
+          }
+          output.concat(timeSec);
+          lcd.print(output);
+       
+    switch(lcd_key)
+          {
+            case btnDown:
+            {
+            tempTemp=tempTemp-1;
+            }
+            case btnUp:
+            {
+              tempTemp=tempTemp+1;
+            }
+          }
+          
+             
+          
+  lcd.setCursor(0,1);
+        lcd.setCursor(0,1);
+        lcd.print("Temp Point 1:");
+        lcd.print(tempTemp)
+        lcd.print(" C      ");
   
