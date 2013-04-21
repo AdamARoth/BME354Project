@@ -85,8 +85,9 @@ void loop()
 
 void optionsMenu()
 { 
-  String options[3] = {
+  String options[4] = {
     "Temp Select",
+    "Set Reflow Pts",
     "Run Reflow",
     "Print Data"      };
   lcd_key = read_LCD_buttons();
