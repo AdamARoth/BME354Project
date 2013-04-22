@@ -50,9 +50,9 @@ void setup()
 }
 void loop()
 {
-  lcd_key = read_LCD_buttons();
   if(!optionsMode)
   {
+    lcd_key = read_LCD_buttons();
     switch(lcd_key)
     {
     case btnRIGHT:
