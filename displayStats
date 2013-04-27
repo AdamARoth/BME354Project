@@ -1,0 +1,36 @@
+
+
+#include <LiquidCrystal.h>
+LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
+
+
+int tempPt3=280;
+int maxPk=300;
+
+float percentErr= (((float)maxPk-(float)tempPt3)/((float)tempPt3))*100;
+
+
+void setup() {
+  lcd.begin(16,2);
+  }
+
+
+void loop()
+{  
+  
+  lcd.setCursor(0,0);
+  lcd.print("Desired Pk ");
+  lcd.print(tempPt3);
+  
+  lcd.setCursor(0,1);
+  lcd.print("Pk ");
+  lcd.print(maxPk);
+  
+  lcd.setCursor(7,1);
+  lcd.print("err ");
+  lcd.print(percentErr);
+  lcd.print("%");
+}
+
+
+  
