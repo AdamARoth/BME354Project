@@ -64,7 +64,7 @@ void setup()
 }
 void loop()
 {
-  if(!optionsMode && !setMode)
+  if(!optionsMode && !setMode && !reflowMode)
   {
     lcd.clear();
     lcd_key = read_LCD_buttons();
@@ -77,7 +77,12 @@ void loop()
       }
     case btnNONE:
       {
-        break;
+          break;
+      }
+    case btnSELECT:
+      {
+        windowStartTime = millis();
+        reflowMode = true;
       }
     default:
       {
@@ -85,10 +90,18 @@ void loop()
       }
     }
   }
-  else if(setMode)
+  else if (setMode)
   {
     setReflowPoints();
   }
+   else if (reflowMode)
+  {
+    pid.optionsPID(setTimePoint);
+    double setTempPoint = pid.setReflowCurve(tempPt1,tempPt2,tempPt3,timePt1,timePt2,timePt3,setTempPoint,setTimePoint,windowStartTime);
+    double setTimePoint = pid.setReflowTimeCurve(tempPt1,tempPt2,tempPt3,timePt1,timePt2,timePt3,setTempPoint,setTimePoint,windowStartTime);
+    Output = pid.reflowPID(setTempPoint,setTimePoint, currTemp, Output, kp, ki, kd);
+    Serial.println(setTempPoint);
+    }
   else
   {
     optionsMenu();
