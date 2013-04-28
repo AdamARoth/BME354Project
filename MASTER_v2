@@ -1,11 +1,13 @@
-   
+
 /* Controlling the state of the heater based on current temperature
  CREATED BY ADAM ROTH, KAVITHA PRASANNA, ALEXA CHOY, TYLER HOBBS
-*/
+ */
 
 // include the library code:
 #include <LiquidCrystal.h>
 #include <TempContDisp.h>
+#include <PIDControl.h>
+#include <PID_v1.h>
 
 #define btnRIGHT 0
 #define btnUP 1
@@ -20,11 +22,10 @@
 #define V5 741
 #define VNONE 1000
 #define optionsSize 4
-
 #define minPoint 80
 #define heaterPin 2
 #define sensePin 5
-#define debounceDelay 100
+#define debounceDelay 70
 #define variablesSize 6
 
 int lcd_key = 0;
@@ -32,15 +33,22 @@ int adc_key_in = 0;
 long lastDebounceTime = 0;
 boolean optionsMode = false;
 boolean setMode = false;
-float curTemp;
-int setPoint = 120;
+boolean reflowMode = false;
+double currTemp;
+double setTempPoint;
+double setTimePoint;
+int kp = 2;
+int ki = 0.1;
+int kd = 5;
+double Output;
+unsigned long windowStartTime;
 
 //Define Min/Max Set Temp
 int minSetPoint = 80;
 int maxSetPoint = 250;
 
 //Define Reflow Points
-int timePt1 = 0;
+int timePt1 = 30;
 int timePt2 = 60;
 int timePt3 = 120;
 int tempPt1 = 150;
@@ -50,9 +58,10 @@ int tempPt3 = 217;
 // initialize the library and select the pins used on the LCD panel
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
 //TempContDisp tempcontdisp(sensePin, setPoint, curTemp);
+PID myPID(&currTemp, &Output, &setTempPoint, kp, ki, kd, DIRECT);
+PIDControl pid(setTempPoint,setTimePoint, currTemp, Output, kp, ki, kd, windowStartTime,tempPt1,tempPt2,tempPt3,timePt1,timePt2,timePt3);
 
 // define some values used by the panel
-int possibleTemp = setPoint;
 int index = 0;
 
 void setup()
@@ -98,395 +107,12 @@ void loop()
   {
     pid.optionsPID(setTimePoint);
     double setTempPoint = pid.setReflowCurve(tempPt1,tempPt2,tempPt3,timePt1,timePt2,timePt3,setTempPoint,setTimePoint,windowStartTime);
-    double setTimePoint = pid.setReflowTimeCurve(tempPt1,tempPt2,tempPt3,timePt1,timePt2,timePt3,setTempPoint,setTimePoint,windowStartTime);
-    Output = pid.reflowPID(setTempPoint,setTimePoint, currTemp, Output, kp, ki, kd);
-    Serial.println(setTempPoint);
+    double setTimePoint = pid.setReflowTime(tempPt1,tempPt2,tempPt3,timePt1,timePt2,timePt3,setTempPoint,setTimePoint,windowStartTime);
+    pid.reflowPID(setTempPoint,setTimePoint, currTemp, Output, kp, ki, kd);
+    //Serial.println(Output);
     }
   else
   {
     optionsMenu();
   }
-}
-
-void optionsMenu()
-{ 
-  String options[4] = {
-    "Temp Select",
-    "Set Reflow Pts",
-    "Run Reflow",
-    "Print Data"      };
-  lcd_key = read_LCD_buttons();
-  switch(lcd_key)
-  {
-  case btnDOWN:
-    {
-      index = index + 1;
-      if(index >= optionsSize)
-      {
-        index = 0;
-      } 
-      lcd.clear();     
-      break;
-    }
-  case btnUP:
-    {
-      index = index - 1;
-      if(index < 0)
-      {
-        index = optionsSize - 1;
-      }
-      lcd.clear();
-      break;
-    }
-  case btnSELECT:
-    {
-      if(index == 0)
-      {
-        setMode = true;
-      }
-      optionsMode = false;
-      break;
-    }
-  case btnNONE:
-    {
-      lcd.setCursor(0,0);
-      lcd.print("Select a Mode");
-      lcd.setCursor(0,1);
-      lcd.print(options[index]);
-      break;
-    }
-  default:
-    {
-      break;
-    }
-  }
-}
-int read_LCD_buttons()
-{
-  int run1 = read_LCD_buttonsHelp();
-  if(run1 != btnNONE)
-  {
-    delay(70);
-    int run2 = read_LCD_buttonsHelp();
-    if(run2 > (run1 - 25) && run2 < (run1 + 25))
-    {
-      return run2;    
-    }
-    
-  }
-  
-}
-int read_LCD_buttonsHelp()
-{
-        int adc_key_in = analogRead(0);
-        if (adc_key_in > VNONE) return btnNONE;
-        else if (adc_key_in < V1) return btnRIGHT;
-        else if (adc_key_in < V2) return btnUP;
-        else if (adc_key_in < V3) return btnDOWN;
-        else if (adc_key_in < V4) return btnLEFT;
-        else if (adc_key_in < V5) return btnSELECT;
-        return btnNONE; 
-}
-//Need to figure out pointers in Arduino
-void setReflowPoints()
-{
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.print("Entering");
-  lcd.setCursor(0,1);
-  lcd.print("Set Mode");
-  delay(1000);  // Done to avoid entering select case too quickly
-  lcd.clear();
-  boolean select = true;
-  int index = 0;
-  int tempTime1 = timePt1; 
-  int tempTime2 = timePt2;
-  int tempTime3 = timePt3;
-  int tempTemp1 = tempPt1;
-  int tempTemp2 = tempPt2;
-  int tempTemp3 = tempPt3;
-  
-  while(select)
-  {
-    int lcd_key = read_LCD_buttons();
-    switch (lcd_key)
-    {
-      case btnLEFT: //switch to previous mode
-      {
-        index=index-1;
-        if(index < 0)
-        {
-          index= variablesSize - 1;
-        }
-        lcd.clear();
-        break;
-      }
-      case btnRIGHT: //switch to next mode
-       {  
-        index=index+1;
-        if(index >= variablesSize)
-        {
-          index=0;
-        }
-        lcd.clear();
-        break;
-       }
-       case btnUP:     //increment up
-        {
-          if(index == 0)
-          {
-            lcd.clear();
-            tempTime1 = tempTime1+1;
-            printReflowPt(1,tempTime1,tempTemp1,0);
-          }
-          else if(index == 1)
-          {
-            lcd.clear();
-            tempTemp1 = tempTemp1+1;
-            printReflowPt(1,tempTime1,tempTemp1,1);
-          }
-          else if(index == 2)
-          {
-            lcd.clear();
-             tempTime2 = tempTime2+1;
-             printReflowPt(2,tempTime2,tempTemp2,0);
-          }
-          else if(index == 3)
-          {
-            lcd.clear();
-            tempTemp2 = tempTemp2+1;
-            printReflowPt(2,tempTime2,tempTemp2,1);
-          }
-          else if(index == 4)
-          {
-            lcd.clear();
-             tempTime3 = tempTime3+1;
-             printReflowPt(3,tempTime3,tempTemp3,0);            
-          }
-          else 
-          {
-            lcd.clear();
-            tempTemp3 = tempTemp3+1;
-            printReflowPt(3,tempTime3,tempTemp3,1);
-          }
-          break;
-        }
-    case btnDOWN:    //increment down
-      {
-         if(index == 0)
-          {
-            lcd.clear();
-            tempTime1 = tempTime1-1;
-            if(tempTime1 < 0)
-            {
-              tempTime1 = 0;
-            }
-            printReflowPt(1,tempTime1,tempTemp1,0);
-          }
-          else if(index == 1)
-          {
-            lcd.clear();
-            tempTemp1 = tempTemp1-1;
-            printReflowPt(1,tempTime1,tempTemp1,1);
-          }
-          else if(index == 2)
-          {
-            lcd.clear();
-             tempTime2 = tempTime2-1;
-             if(tempTime2 < tempTime1+1)
-             {
-                tempTime2 = tempTime1+1;
-             }
-             printReflowPt(2,tempTime2,tempTemp2,0);
-          }
-          else if(index == 3)
-          {
-            lcd.clear();
-            tempTemp2 = tempTemp2-1;
-            printReflowPt(2,tempTime2,tempTemp2,1);
-          }
-          else if(index == 4)
-          {
-            lcd.clear();
-             tempTime3 = tempTime3-1;
-             if(tempTime3 < tempTime2+1)
-             {
-                 tempTime3 = tempTime2+1;
-             }
-             printReflowPt(3,tempTime3,tempTemp3,0);
-          }
-          else 
-          {
-            lcd.clear();
-            tempTemp3 = tempTemp3-1;
-            printReflowPt(3,tempTime3,tempTemp3,1);
-          }
-          break;
-      }
-    case btnSELECT:  //enter and continue
-    {
-        if(tempCheck(tempTemp1,1) && tempCheck(tempTemp2,2) && tempCheck(tempTemp3,3))
-        {
-          if(verifySelection())
-          {
-            timePt1 = tempTime1;
-            timePt2 = tempTime2;
-            timePt3 = tempTime3;
-            tempPt1 = tempTemp1;
-            tempPt2 = tempTemp2;
-            tempPt3 = tempTemp3;
-            select = false;
-            setMode = false;
-          }
-        } 
-        break;
-    }
-
-    case btnNONE:    // The location where functions are executed
-    {
-      if(tempTime2 < tempTime1+1)
-      {
-          tempTime2 = tempTime1+1;
-       }
-       if(tempTime3 < tempTime2+1)
-       {
-          tempTime3 = tempTime2+1;
-       }
-        if(index == 0)
-        {
-          printReflowPt(1,tempTime1,tempTemp1,0);
-        }
-        else if(index == 1)
-        {
-          printReflowPt(1,tempTime1,tempTemp1,1);
-        }
-        else if(index == 2)
-        {
-          printReflowPt(2,tempTime2,tempTemp2,0);
-        }
-        else if(index == 3)
-        {
-          printReflowPt(2,tempTime2,tempTemp2,1);
-        }
-        else if(index == 4)
-        {
-          printReflowPt(3,tempTime3,tempTemp3,0);
-        }
-        else
-        {
-          printReflowPt(3,tempTime3,tempTemp3,1);
-        }
-        break;
-    }
-  }
-  }
-}
-void printReflowPt(int dataSet,int time, int temp, int change) 
-{  
-   String output = "";
-   lcd.setCursor(0,0);
-   output.concat("Time Pt ");
-   output.concat(dataSet);
-   output.concat(" ");
-   if(change == 0) // Adds * to variable if being changed (0 if time, 1 if temp )
-   {
-     output.concat("*");
-   }
-   int timeMin = time/60;
-   int timeSec = time%60;
-   //Add zero to single digit of min
-    if(timeMin < 10)
-    {
-      output.concat("0"); 
-    }
-    output.concat(timeMin);
-    output.concat(":");
-    //Add zero to single digit of sec
-    if(timeSec < 10)
-    {
-      output.concat("0");
-    }
-    output.concat(timeSec);
-    lcd.print(output);
-    lcd.setCursor(0,1);
-    String output2 = "";
-    output2.concat("Temp Pt ");
-    output2.concat(dataSet);
-    output2.concat(" ");
-    if(change == 1)
-    {
-       output2.concat("*");
-    }
-    output2.concat(temp);
-    output2.concat(" C ");
-    lcd.print(output2);
-}
-boolean tempCheck(int possibleTemp, int dataSet)
-{
-    if(possibleTemp > maxSetPoint)
-    {
-           lcd.clear();
-           lcd.setCursor(0,0);
-           lcd.print("Temp ");
-           lcd.print(dataSet);
-           lcd.print(" Too High!");
-           lcd.setCursor(0,1);
-           lcd.print("Please Set Lower");
-           delay(3000);
-           possibleTemp = maxSetPoint;
-           return false;
-    }
-    else if(possibleTemp < minSetPoint)
-    {
-           lcd.setCursor(0,0);
-           lcd.print("Temp ");
-           lcd.print(dataSet); 
-           lcd.print(" Too Low!");
-           lcd.setCursor(0,1);
-           lcd.print("Please Set Higher");
-           delay(3000);
-           possibleTemp = minSetPoint;
-           return false;
-    }  
-    return true;
-}
-boolean verifySelection()
-{
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.print("Change Set");
-  lcd.setCursor(0,1);
-  lcd.print("Points?");
-  delay(2000);
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.print("Press SEL");
-  lcd.setCursor(0,1);
-  lcd.print("To Verify");
-  boolean notVerified = true;
-  while(notVerified)
-  {
-    int check = read_LCD_buttons();
-    switch(check)
-    {
-      case(btnSELECT):
-      {
-        return true;
-        break;
-      }
-      case(btnNONE):
-      {
-        break;
-      }
-      default:
-      {
-        return false;
-      }
-    }
-  }
-  
-}   }
-    }
-  }
-  
 }
