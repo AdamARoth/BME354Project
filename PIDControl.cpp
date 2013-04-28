@@ -29,13 +29,12 @@ void PIDControl::reflowPID(double setTempPoint, double setTimePoint, double Outp
   displayTemp(currTemp,setTempPoint);
  
   myPID.Compute();
-
   _now = millis();
-  if(_now - windowStartTime > setTimePoint)
+  if((_now - windowStartTime)/1000 > setTimePoint)
   { //time to shift the Reflow Window
     windowStartTime += setTimePoint;
   }
-  if (Output > _now - windowStartTime)
+  if (Output > (_now - windowStartTime)/1000)
   {
 	digitalWrite(heaterPin,HIGH);
   }
@@ -44,26 +43,48 @@ void PIDControl::reflowPID(double setTempPoint, double setTimePoint, double Outp
 
 double PIDControl::setReflowCurve(int tempPt1,int tempPt2,int tempPt3,int timePt1, int timePt2, int timePt3, double setTempPoint, double setTimePoint,unsigned long windowStartTime)
 {
-  if((double) _now < (double) timePt1)
+ if((double) _now/1000 < (double) timePt1)
   {
-    setTempPoint = (((double) tempPt1-20)/((double) timePt1 - (double) windowStartTime))*((double) _now) + 20;
-    setTimePoint = (double) timePt1;
+    setTempPoint = (((double) tempPt1-20)/((double) timePt1 - 0))*((double) _now - (double) windowStartTime)/1000  +  20;
     return setTempPoint;
   }
-  else if(((double) _now >= (double) timePt1) && ((double) _now <= (double) timePt2))
+  else if(((double) _now/1000 >= (double) timePt1) && ((double) _now/1000 <= (double) timePt2))
   {
     setTempPoint = (((double) tempPt2-(double) tempPt1)/((double) timePt2-(double) timePt1))*((double) _now) + (double) tempPt1;
-    setTimePoint = (double) timePt2;
+    return setTempPoint;
   }
-  else if(((double) _now >= (double) timePt2) && ((double) _now <= (double) timePt3))
+  else if(((double) _now/1000 >= (double) timePt2) && ((double) _now/1000 <= (double) timePt3))
   {
     setTempPoint = (((double) tempPt3-(double) tempPt2)/((double) timePt3-(double) timePt2))*((double) _now)+ (double) tempPt2;
-    setTimePoint = (double) timePt3;
+    return setTempPoint;
   }
   else
   {
   }
 }
+
+double PIDControl::setReflowTime(int tempPt1,int tempPt2,int tempPt3,int timePt1, int timePt2, int timePt3, double setTempPoint, double setTimePoint,unsigned long windowStartTime)
+{
+ if((double) _now/1000 < (double) timePt1)
+  {
+    setTimePoint = (double) timePt1;
+    return setTimePoint;
+  }
+  else if(((double) _now/1000 >= (double) timePt1) && ((double) _now/1000 <= (double) timePt2))
+  {
+    setTimePoint = (double) timePt2;
+    return setTimePoint;
+  }
+  else if(((double) _now/1000 >= (double) timePt2) && ((double) _now/1000 <= (double) timePt3))
+  {
+    setTimePoint = (double) timePt3;
+    return setTimePoint;
+  }
+  else
+  {
+  }
+}
+
 void PIDControl::displayTemp(double currTemp, double setTempPoint)
 {
   lcd.clear();
