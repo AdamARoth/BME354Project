@@ -20,9 +20,9 @@ class PIDControl
     int kd;
     int ki;
     
-    PIDControl(double,double,double,double,int,int,int,unsigned long,int,int,int,int,int,int);
+    PIDControl(double,double,double,unsigned long,int,int,int,int,int,int);
     void optionsPID(int);
-    void reflowPID(double,double,double,unsigned long,int,int,int);
+    double reflowPID(double,double,unsigned long);
     double setReflowCurve(int,int,int,int,int,int,double,double,unsigned long);
     double setReflowTime(int,int,int,int,int,int,double,double,unsigned long);
     void displayTemp(double,double);
