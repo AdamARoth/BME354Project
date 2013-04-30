@@ -6,9 +6,13 @@
 #include "LiquidCrystal.h"
 #include "PID_v1.h"
 extern LiquidCrystal lcd;
-extern PID myPID;
 
-PIDControl::PIDControl(double setTempPoint, double setTimePoint, double currTemp, double Output, int kp, int ki, int kd, unsigned long windowStartTime,int tempPt1,int tempPt2,int tempPt3,int timePt1, int timePt2, int timePt3)
+double currTemp, Output, setTempPoint;
+int kp, ki, kd;
+
+extern PID myPID(&currTemp, &Output, &setTempPoint, kp, ki, kd, DIRECT);
+
+PIDControl::PIDControl(double setTempPoint, double setTimePoint, double currTemp,unsigned long windowStartTime,int tempPt1,int tempPt2,int tempPt3,int timePt1, int timePt2, int timePt3)
 {
 }
 
@@ -21,14 +25,17 @@ void PIDControl::optionsPID(int setTimePoint)
   myPID.SetMode(AUTOMATIC); 
 }
 
-void PIDControl::reflowPID(double setTempPoint, double setTimePoint, double Output, unsigned long windowStartTime, int kp, int ki, int kd)
+double PIDControl::reflowPID(double setTempPoint, double setTimePoint, unsigned long windowStartTime)
 {
   _val=analogRead(sensePin);
   currTemp = _val * 0.00489 / 0.005;	//Converting the voltage of sensePin to current temp.
- 
+
   displayTemp(currTemp,setTempPoint);
- 
+
   myPID.Compute();
+Serial.println(Output);
+return Output;
+
   _now = millis();
   if((_now - windowStartTime)/1000 > setTimePoint)
   { //time to shift the Reflow Window
