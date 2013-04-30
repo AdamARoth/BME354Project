@@ -1,10 +1,11 @@
+
 /* Controlling the state of the heater based on current temperature
  CREATED BY ADAM ROTH, KAVITHA PRASANNA, ALEXA CHOY, TYLER HOBBS
  */
 
 // include the library code:
 #include <LiquidCrystal.h>
-//#include <TempContDisp.h>
+#include <TempContDisp.h>
 #include <PIDControl.h>
 #include <PID_v1.h>
 
@@ -33,13 +34,13 @@ long lastDebounceTime = 0;
 boolean optionsMode = false;
 boolean setMode = false;
 boolean reflowMode = false;
-double currTemp;
-double setTempPoint;
-double setTimePoint;
-int kp = 2;
-int ki = 0.1;
-int kd = 5;
-double Output;
+double currentTemp;
+double setTemp;
+double setTime;
+int kpC = 2;
+int kiC = 0.1;
+int kdC = 5;
+double PIDOutput;
 unsigned long windowStartTime;
 
 //Define Min/Max Set Temp
@@ -57,8 +58,7 @@ int tempPt3 = 217;
 // initialize the library and select the pins used on the LCD panel
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
 //TempContDisp tempcontdisp(sensePin, setPoint, curTemp);
-PID myPID(&currTemp, &Output, &setTempPoint, kp, ki, kd, DIRECT);
-PIDControl pid(setTempPoint,setTimePoint, currTemp, Output, kp, ki, kd, windowStartTime,tempPt1,tempPt2,tempPt3,timePt1,timePt2,timePt3);
+PIDControl pid(setTemp,setTime, currentTemp, windowStartTime,tempPt1,tempPt2,tempPt3,timePt1,timePt2,timePt3);
 
 // define some values used by the panel
 int index = 0;
@@ -104,11 +104,14 @@ void loop()
   }
    else if (reflowMode)
   {
-    pid.optionsPID(setTimePoint);
-    double setTempPoint = pid.setReflowCurve(tempPt1,tempPt2,tempPt3,timePt1,timePt2,timePt3,setTempPoint,setTimePoint,windowStartTime);
-    double setTimePoint = pid.setReflowTime(tempPt1,tempPt2,tempPt3,timePt1,timePt2,timePt3,setTempPoint,setTimePoint,windowStartTime);
-    pid.reflowPID(setTempPoint,setTimePoint, currTemp, Output, kp, ki, kd);
-    //Serial.println(Output);
+    pid.optionsPID(setTime);
+    setTemp = pid.setReflowCurve(tempPt1,tempPt2,tempPt3,timePt1,timePt2,timePt3,setTemp,setTime,windowStartTime);
+    //Serial.println(setTemp);
+    setTime = pid.setReflowTime(tempPt1,tempPt2,tempPt3,timePt1,timePt2,timePt3,setTemp,setTime,windowStartTime);
+   
+   Serial.println(PIDOutput);
+    PIDOutput = pid.reflowPID(setTemp,setTime, windowStartTime);
+    Serial.println(PIDOutput);
     }
   else
   {
