@@ -1,0 +1,260 @@
+void setReflowPoints()
+{
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("Entering");
+  lcd.setCursor(0,1);
+  lcd.print("Set Mode");
+  delay(1000);  // Done to avoid entering select case too quickly
+  lcd.clear();
+  boolean select = true;
+  int index = 0;
+  int tempTime1 = timePt1; 
+  int tempTime2 = timePt2;
+  int tempTime3 = timePt3;
+  int tempTemp1 = tempPt1;
+  int tempTemp2 = tempPt2;
+  int tempTemp3 = tempPt3;
+
+  while(select)
+  {
+    int lcd_key = read_LCD_buttons();
+    switch (lcd_key)
+    {
+    case btnLEFT: //switch to previous mode
+      {
+        index=index-1;
+        if(index < 0)
+        {
+          index= variablesSize - 1;
+        }
+        lcd.clear();
+        break;
+      }
+    case btnRIGHT: //switch to next mode
+      {  
+        index=index+1;
+        if(index >= variablesSize)
+        {
+          index=0;
+        }
+        lcd.clear();
+        break;
+      }
+    case btnUP:     //increment up
+      {
+        if(index == 0)
+        {
+          lcd.clear();
+          tempTime1 = tempTime1+1;
+          printReflowPoint(1,tempTime1,tempTemp1,0);
+        }
+        else if(index == 1)
+        {
+          lcd.clear();
+          tempTemp1 = tempTemp1+1;
+          printReflowPoint(1,tempTime1,tempTemp1,1);
+        }
+        else if(index == 2)
+        {
+          lcd.clear();
+          tempTime2 = tempTime2+1;
+          printReflowPoint(2,tempTime2,tempTemp2,0);
+        }
+        else if(index == 3)
+        {
+          lcd.clear();
+          tempTemp2 = tempTemp2+1;
+          printReflowPoint(2,tempTime2,tempTemp2,1);
+        }
+        else if(index == 4)
+        {
+          lcd.clear();
+          tempTime3 = tempTime3+1;
+          printReflowPoint(3,tempTime3,tempTemp3,0);            
+        }
+        else 
+        {
+          lcd.clear();
+          tempTemp3 = tempTemp3+1;
+          printReflowPoint(3,tempTime3,tempTemp3,1);
+        }
+        break;
+      }
+    case btnDOWN:    //increment down
+      {
+        if(index == 0)
+        {
+          lcd.clear();
+          tempTime1 = tempTime1-1;
+          if(tempTime1 < 0)
+          {
+            tempTime1 = 0;
+          }
+          printReflowPoint(1,tempTime1,tempTemp1,0);
+        }
+        else if(index == 1)
+        {
+          lcd.clear();
+          tempTemp1 = tempTemp1-1;
+          printReflowPoint(1,tempTime1,tempTemp1,1);
+        }
+        else if(index == 2)
+        {
+          lcd.clear();
+          tempTime2 = tempTime2-1;
+          if(tempTime2 < tempTime1+1)
+          {
+            tempTime2 = tempTime1+1;
+          }
+          printReflowPoint(2,tempTime2,tempTemp2,0);
+        }
+        else if(index == 3)
+        {
+          lcd.clear();
+          tempTemp2 = tempTemp2-1;
+          printReflowPoint(2,tempTime2,tempTemp2,1);
+        }
+        else if(index == 4)
+        {
+          lcd.clear();
+          tempTime3 = tempTime3-1;
+          if(tempTime3 < tempTime2+1)
+          {
+            tempTime3 = tempTime2+1;
+          }
+          printReflowPoint(3,tempTime3,tempTemp3,0);
+        }
+        else 
+        {
+          lcd.clear();
+          tempTemp3 = tempTemp3-1;
+          printReflowPoint(3,tempTime3,tempTemp3,1);
+        }
+        break;
+      }
+    case btnSELECT:  //enter and continue
+      {
+        if(tempCheck(tempTemp1,1) && tempCheck(tempTemp2,2) && tempCheck(tempTemp3,3))
+        {
+          if(verifySelection())
+          {
+            timePt1 = tempTime1;
+            timePt2 = tempTime2;
+            timePt3 = tempTime3;
+            tempPt1 = tempTemp1;
+            tempPt2 = tempTemp2;
+            tempPt3 = tempTemp3;
+            select = false;
+            setMode = false;
+            delay(400);
+          }
+        } 
+        break;
+      }
+
+    case btnNONE:    // The location where functions are executed
+      {
+        if(tempTime2 < tempTime1+1)
+        {
+          tempTime2 = tempTime1+1;
+        }
+        if(tempTime3 < tempTime2+1)
+        {
+          tempTime3 = tempTime2+1;
+        }
+        if(index == 0)
+        {
+          printReflowPoint(1,tempTime1,tempTemp1,0);
+        }
+        else if(index == 1)
+        {
+          printReflowPoint(1,tempTime1,tempTemp1,1);
+        }
+        else if(index == 2)
+        {
+          printReflowPoint(2,tempTime2,tempTemp2,0);
+        }
+        else if(index == 3)
+        {
+          printReflowPoint(2,tempTime2,tempTemp2,1);
+        }
+        else if(index == 4)
+        {
+          printReflowPoint(3,tempTime3,tempTemp3,0);
+        }
+        else
+        {
+          printReflowPoint(3,tempTime3,tempTemp3,1);
+        }
+        break;
+      }
+    }
+  }
+}
+
+boolean tempCheck(int possibleTemp, int dataSet)
+{
+  if(possibleTemp > maxSetPoint)
+  {
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("Temp ");
+    lcd.print(dataSet);
+    lcd.print(" Too High!");
+    lcd.setCursor(0,1);
+    lcd.print("Please Set Lower");
+    delay(3000);
+    possibleTemp = maxSetPoint;
+    return false;
+  }
+  else if(possibleTemp < minSetPoint)
+  {
+    lcd.setCursor(0,0);
+    lcd.print("Temp ");
+    lcd.print(dataSet); 
+    lcd.print(" Too Low!");
+    lcd.setCursor(0,1);
+    lcd.print("Please Set Higher");
+    delay(3000);
+    possibleTemp = minSetPoint;
+    return false;
+  }  
+  return true;
+}
+
+boolean verifySelection()
+{
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("Change Set");
+  lcd.setCursor(0,1);
+  lcd.print("Points?");
+  delay(2000);
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("Press SEL");
+  lcd.setCursor(0,1);
+  lcd.print("To Verify");
+  boolean notVerified = true;
+  while(notVerified)
+  {
+    int check = read_LCD_buttons();
+    switch(check)
+    {
+      case(btnSELECT):
+      {
+        return true;
+        break;
+      }
+      case(btnNONE):
+      {
+        break;
+      }
+    default:
+      {
+        return false;
+      }
+    }
+  }
+}
