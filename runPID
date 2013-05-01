@@ -1,0 +1,48 @@
+void optionsPID()
+{
+
+//tell the PID to range between 0 and the full window size
+  myPID.SetOutputLimits(0, setTime);
+
+  //turn the PID on
+  myPID.SetMode(AUTOMATIC);
+  
+}
+
+void runPID()
+{
+  val=analogRead(sensePin);
+  currTemp = val * 0.00489 / 0.005;  //Converting the voltage of sensePin to current temp.
+
+  //displayTemp();
+
+  double gap = abs(setTemp-currTemp); //distance away from setpoint
+  if(gap<10)
+  {  //we're close to setpoint, use conservative tuning parameters
+    myPID.SetTunings(consKp, consKi, consKd);
+  }
+  else
+  {
+    //we're far from setpoint, use aggressive tuning parameters
+    myPID.SetTunings(aggKp, aggKi, aggKd);
+  }
+
+  myPID.Compute();
+
+  now = millis();
+  if((now - windowStartTime)/1000 > setTime)
+  { //time to shift the Reflow Window
+    windowStartTime += (setTime*1000);
+  }
+  if (PIDOutput > (now - windowStartTime)/1000)
+  {
+    digitalWrite(heaterPin,HIGH);
+  }
+  else digitalWrite(heaterPin,LOW);
+  
+  if ((now-windowStartTime)/1000 > (timePt3 + 50))
+  {
+    digitalWrite(heaterPin,LOW);
+  }
+}
+
