@@ -1,23 +1,29 @@
-void setReflowCurve (float tempPt1,float tempPt2,float tempPt3,float timePt1, float timePt2, float timePt3, double setTimePoint)
+void setReflowCurve()
 {
-  if(now<timePt1)
+  elapsedTime = ((double) now - (double) startTime)/1000;  // elapsed time in seconds!!!
+  
+  if(elapsedTime < (double) timePt1)
   {
-    setTempPoint=((tempPt1-20)/(timePt1-windowStartTime))*(now) + 20;
-    setTimePoint = timePt1;
+    setTemp = (((double) tempPt1-(double) startTemp)/((double) timePt1 - 0))*((double) now - (double) windowStartTime)/1000 + (double) startTemp;
+    setTime = (double) timePt1;
   }
-  else if((now>=timePt1)&&(now<=timePt2))
+  else if((elapsedTime >= (double) timePt1) && (elapsedTime <= (double) timePt2))
   {
-    setTempPoint=((tempPt2-tempPt1)/(timePt2-timePt1))*(now) + tempPt1;
-    setTimePoint=timePt2;
+    setTemp = (((double) tempPt2-(double) tempPt1)/((double) timePt2-(double) timePt1))*((double) now - (double) windowStartTime)/1000 + (double) tempPt1;
+    setTime = (double) timePt2;
   }
-  else if((now=>timePt2)&&(now<=timePt3))
+  else if((elapsedTime >= (double) timePt2) && (elapsedTime <= (double) timePt3))
   {
-    setTempPoint=((tempPt3-tempPt2)/(timePt3-timePt2))*(now)+ tempPt2;
-    setTimePoint=timePt3;
+    setTemp = (((double) tempPt3-(double) tempPt2)/((double) timePt3-(double) timePt2))*((double) now - (double) windowStartTime)/1000 + (double) tempPt2;
+    setTime = (double) timePt3;
   }
-else
-{
-  return;
-}
-
+  else if((elapsedTime >= (double) timePt3) && (elapsedTime <= (double) timePt3+50))
+  {
+    setTemp = (double) tempPt3;
+    setTime = (double) timePt3 + 50;
+    }
+  else
+  {
+    setTemp = 0;
+  }
 }
