@@ -1,0 +1,135 @@
+
+/*******************************************************************************
+MASTER CODE TO RUN THE KAAT REFLOW-SOLDER OVEN - Powered by Audrina the Arduino
+Created by ADAM ROTH, KAVITHA PRASANNA, ALEXA CHOY, TYLER HOBBS
+KAAT Industries
+********************************************************************************/
+
+// include the library code:
+#include <LiquidCrystal.h>
+#include <HeaterControl.h>
+#include <PID_v1.h>
+#include <EEPROM.h>
+
+// define variables in code
+#define btnRIGHT 0
+#define btnUP 1
+#define btnDOWN 2
+#define btnLEFT 3
+#define btnSELECT 4
+#define btnNONE 5
+#define V1 95
+#define V2 144
+#define V3 329
+#define V4 504
+#define V5 741
+#define VNONE 1000
+#define optionsSize 6
+#define heaterPin 2
+#define sensePin 5
+#define debounceDelay 80
+#define variablesSize 6
+#define warnPoint 255
+#define maxPoint 280
+#define minSetPoint 80    //Define Min/Max Set Temp
+#define maxSetPoint 250   //Define Min/Max Set Temp
+
+//Set and define variables in code
+int lcd_key = 0;
+int adc_key_in = 0;
+long lastDebounceTime = 0;
+boolean optionsMode = false;
+boolean setMode = false;
+boolean reflowMode = false;
+double currTemp, setTemp, setTime, PIDOutput;
+unsigned long windowStartTime, now;
+double elapsedTime;
+int startTemp, startTime;
+int val;
+int index = 0;
+int maxPk = 0;      //Initialize Max Peak as 0 before run occurs
+
+//Define Reflow Points
+int timePt1, timePt2, timePt3, tempPt1, tempPt2, tempPt3;
+
+//Define the aggressive and conservative Tuning Parameters
+double aggKp=12, aggKi=4, aggKd=3;
+double consKp=3, consKi=1.2, consKd=8;
+
+// initialize the libraries and select the pins used on the LCD panel
+LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
+PID myPID(&currTemp, &PIDOutput, &setTemp,consKp,consKi,consKd, DIRECT);
+HeaterControl heatcont(currTemp, setTemp,warnPoint,maxPoint);
+
+void setup()
+{
+  Serial.begin(9600);
+  lcd.begin(16, 2);          // start the library
+  pinMode(heaterPin,OUTPUT); // set heaterPin to OUTPUT mode
+  //Check if defaults are saved in device
+  if(EEPROM.read(6) == 1)
+  {
+    timePt1 = (int) EEPROM.read(0);
+    timePt2 = (int) (timePt1 + EEPROM.read(1));
+    timePt3 = (int) (timePt2 + EEPROM.read(2));
+    tempPt1 = (int) EEPROM.read(3);
+    tempPt2 = (int) EEPROM.read(4);
+    tempPt3 = (int) EEPROM.read(5);
+  }
+  startUpMessage();
+}
+void loop()
+{
+  if(!optionsMode && !setMode && !reflowMode)
+  {
+    lcd_key = read_LCD_buttons();
+    switch(lcd_key)
+    {
+    case btnRIGHT:
+      {
+        optionsMode = true;
+        lcd.clear();
+        break;
+      }
+    case btnNONE:
+      {
+        lcd.setCursor(0,0);
+        lcd.print("RIGHT: OPT MENU ");
+        lcd.setCursor(0,1);
+        lcd.print("SEL: RUN REFLOW ");
+        break;
+      }
+    case btnSELECT:
+      {
+        val = analogRead(sensePin);
+        startTemp = val * 0.00489 / 0.005;
+        startTime = millis();
+        windowStartTime = millis();
+        now = millis();
+        reflowMode = true;
+        break;
+      }
+    default:
+      {
+        break;
+      }
+    }
+  }
+  else if (setMode)
+  {
+    setReflowPoints();
+  }
+  else if (reflowMode)
+  {
+    optionsPID();
+    setReflowCurve();
+    runPID();
+    Serial.println(setTemp);
+    printRunReflow();
+    heatcont.heaterSafety(currTemp, setTemp,warnPoint,maxPoint);
+  }
+  else
+  {
+    optionsMenu();
+  }
+}
