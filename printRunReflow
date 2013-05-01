@@ -1,0 +1,63 @@
+void printRunReflow()
+{
+  lcd.clear();
+  lcd.setCursor(0,0);
+  String output = "";
+  output.concat("CurT: ");
+  if(currTemp < 100)
+  {
+    output.concat(" ");
+  }
+  output.concat((int) currTemp);
+  output.concat("C");
+  output.concat(" ");
+  output.concat("00:00");
+  lcd.print(output);
+
+  lcd.setCursor(0,1);
+  String output2 = "";
+  output2.concat("SetT: ");
+  if(elapsedTime < (double) timePt1)
+  {
+    Serial.println(elapsedTime);
+    output2.concat(tempPt1);
+    output2.concat("C");
+    output2.concat("   S1");
+  }
+  else if((elapsedTime >= (double) timePt1) && (elapsedTime <= (double) timePt2))
+  {
+    output2.concat(tempPt2);
+    output2.concat("C");
+    output2.concat("   S2");
+  }
+  else if((elapsedTime >= (double) timePt2) && (elapsedTime <= (double) timePt3))
+  {
+    output2.concat(tempPt3);
+    output2.concat("C");
+    output2.concat("   S3");
+  }
+  else if((elapsedTime >= (double) timePt3) && (elapsedTime <= (double) timePt3+50))
+  {
+    output2.concat(tempPt3);
+    output2.concat("C");
+    output2.concat(" RFLW");
+  }
+  lcd.print(output2);
+  delay(2000);
+
+  if(elapsedTime >= (double) timePt3+50)
+  {
+    lcd.clear();
+    lcd.setCursor(0,0);
+    lcd.print("CurT: ");
+    lcd.print((int) currTemp);
+    lcd.print("C");
+    lcd.setCursor(0,1);
+    lcd.print("DONE! COOL DOWN!");
+    delay(4000);
+    reflowMode = false;
+  }
+}
+
+
+
