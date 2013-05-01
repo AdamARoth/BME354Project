@@ -1,0 +1,75 @@
+void optionsMenu()
+{ 
+  String options[optionsSize] = {
+    "Set Reflow Pts",
+    "Run Reflow",
+    "Print Data",
+    "Display Stats",
+    "Save New Default",
+    "Restore Settings"    };
+  lcd_key = read_LCD_buttons();
+  switch(lcd_key)
+  {
+  case btnDOWN:
+    {
+      index = index + 1;
+      if(index >= optionsSize)
+      {
+        index = 0;
+      } 
+      lcd.clear();     
+      break;
+    }
+  case btnUP:
+    {
+      index = index - 1;
+      if(index < 0)
+      {
+        index = optionsSize - 1;
+      }
+      lcd.clear();
+      break;
+    }
+  case btnSELECT:
+    {
+      if(index == 0)
+      {
+        setMode = true;
+      }
+      else if (index == 1)
+      {
+        reflowMode = true; 
+      }
+      else if (index == 2)
+      {
+        // PRINT DATA 
+      }
+      else if(index == 3)
+      {
+        displayStats();
+      }
+      else if(index == 4)
+      {
+        checkNewDefault();
+      }
+      else if(index == 5)
+      {
+        restoreDefaultSettings();
+      }
+      optionsMode = false;
+      break;
+    }
+  case btnNONE:
+    {
+      lcd.setCursor(0,0);
+      lcd.print("Select a Mode");
+      lcd.setCursor(0,1);
+      lcd.print(options[index]);
+      break;
+    }
+  default:
+    {
+      break;
+    }
+  }
+}
