@@ -1,5 +1,4 @@
 
-
 void displayStats()
 {
   //Displays Stats
@@ -9,7 +8,6 @@ void displayStats()
   lcd.setCursor(0,1);
   lcd.print("Stats Mode");
   delay(1000);
-  
   if(maxPk == 0)
   {
     
@@ -23,9 +21,11 @@ void displayStats()
     lcd.print("Stats Cannot");
     lcd.setCursor(0,1);
     lcd.print("Be Generated");
-    
+    delay(1000);
+  }
   else
   {
+    float percentErr= abs((((float)maxPk-(float)tempPt3)/((float)tempPt3))*100);
     lcd.clear();
     lcd.setCursor(0,0);
     lcd.print("Desired Pk ");
@@ -36,8 +36,9 @@ void displayStats()
     lcd.print(maxPk);
     
     lcd.setCursor(7,1);
-    lcd.print("err ");
-    lcd.print(percentErr);
+    lcd.print("Err ");
+    lcd.print((int)percentErr); //Rounds error to an int to allow display of percent sign
     lcd.print("%");
+    delay(3000);
   }
 }
