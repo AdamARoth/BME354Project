@@ -164,6 +164,7 @@ void setReflowPoints()
         if(tempTime3 < tempTime2+1) //make sure time points occur after one another
         {
           tempTime3 = tempTime2+1; 
+        }
         if(tempTemp3 < 218)
         {
           tempTemp3 = 218; //Liquidus Check
@@ -274,3 +275,4 @@ boolean verifySelection()
     }
   }
 }
+
