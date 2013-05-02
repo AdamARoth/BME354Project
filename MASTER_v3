@@ -1,9 +1,8 @@
-
 /*******************************************************************************
-MASTER CODE TO RUN THE KAAT REFLOW-SOLDER OVEN - Powered by Audrina the Arduino
-Created by ADAM ROTH, KAVITHA PRASANNA, ALEXA CHOY, TYLER HOBBS
-KAAT Industries
-********************************************************************************/
+ * MASTER CODE TO RUN THE KAAT REFLOW-SOLDER OVEN - Powered by Audrina the Arduino
+ * Created by ADAM ROTH, KAVITHA PRASANNA, ALEXA CHOY, TYLER HOBBS
+ * KAAT Industries
+ ********************************************************************************/
 
 // include the library code:
 #include <LiquidCrystal.h>
@@ -121,12 +120,7 @@ void loop()
   }
   else if (reflowMode)
   {
-    optionsPID();
-    setReflowCurve();
-    runPID();
-    Serial.println(setTemp);
-    printRunReflow();
-    heatcont.heaterSafety(currTemp, setTemp,warnPoint,maxPoint);
+    runReflowMode();
   }
   else
   {
