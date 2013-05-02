@@ -11,7 +11,7 @@ void printRunReflow()
   output.concat((int) currTemp);
   output.concat("C");
   output.concat(" ");
-  output.concat(timeDisplay());
+  output.concat(timerDisplay());
   lcd.print(output);
 
   lcd.setCursor(0,1);
@@ -19,7 +19,6 @@ void printRunReflow()
   output2.concat("SetT: ");
   if(elapsedTime < (double) timePt1)
   {
-    Serial.println(elapsedTime);
     output2.concat(tempPt1);
     output2.concat("C");
     output2.concat("   S1");
@@ -43,30 +42,29 @@ void printRunReflow()
     output2.concat(" RFLW");
   }
   lcd.print(output2);
-  delay(1000);
+  delay(500);
 }
 
 
-
-String timeDisplay()
+String timerDisplay()
 { 
-  String timeOutput = "";
+  String timerOutput = "";
   int time = (timePt3+50)-(int) elapsedTime;
   int timeMin = time/60;
   int timeSec = time%60;
   //Add zero to single digit of min
   if(timeMin < 10)
   {
-    timeOutput.concat("0"); 
+    timerOutput.concat("0"); 
   }
-  timeOutput.concat(timeMin);
-  timeOutput.concat(":");
+  timerOutput.concat(timeMin);
+  timerOutput.concat(":");
   //Add zero to single digit of sec
   if(timeSec < 10)
   {
-    timeOutput.concat("0");
+    timerOutput.concat("0");
   }
-  timeOutput.concat(timeSec);
-  return timeOutput;
+  timerOutput.concat(timeSec);
+  return timerOutput;
 
 }
