@@ -23,10 +23,10 @@
 #define V4 504
 #define V5 741
 #define VNONE 1000
-#define optionsSize 6
+#define optionsSize 4
 #define heaterPin 2
 #define sensePin 5
-#define debounceDelay 80
+#define debounceDelay 85
 #define variablesSize 6
 #define warnPoint 255
 #define maxPoint 280
@@ -41,9 +41,9 @@ boolean optionsMode = false;
 boolean setMode = false;
 boolean reflowMode = false;
 double currTemp, setTemp, setTime, PIDOutput;
-unsigned long windowStartTime, now;
+unsigned long windowStartTime, now, startTime;
 double elapsedTime;
-int startTemp, startTime;
+int startTemp;
 int val;
 int index = 0;
 int maxPk = 0;      //Initialize Max Peak as 0 before run occurs
