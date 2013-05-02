@@ -1,4 +1,4 @@
-/*******************************************************************************
+******************************************************************************
  * MASTER CODE TO RUN THE KAAT REFLOW-SOLDER OVEN - Powered by Audrina the Arduino
  * Created by ADAM ROTH, KAVITHA PRASANNA, ALEXA CHOY, TYLER HOBBS
  * KAAT Industries
@@ -23,10 +23,10 @@
 #define V4 504
 #define V5 741
 #define VNONE 1000
-#define optionsSize 4
+#define optionsSize 6
 #define heaterPin 2
 #define sensePin 5
-#define debounceDelay 85
+#define debounceDelay 80
 #define variablesSize 6
 #define warnPoint 255
 #define maxPoint 280
@@ -38,12 +38,11 @@ int lcd_key = 0;
 int adc_key_in = 0;
 long lastDebounceTime = 0;
 boolean optionsMode = false;
-boolean setMode = false;
 boolean reflowMode = false;
 double currTemp, setTemp, setTime, PIDOutput;
-unsigned long windowStartTime, now, startTime;
+unsigned long windowStartTime, now;
 double elapsedTime;
-int startTemp;
+int startTemp, startTime;
 int val;
 int index = 0;
 int maxPk = 0;      //Initialize Max Peak as 0 before run occurs
@@ -79,7 +78,7 @@ void setup()
 }
 void loop()
 {
-  if(!optionsMode && !setMode && !reflowMode)
+  if(!optionsMode && !reflowMode)
   {
     lcd_key = read_LCD_buttons();
     switch(lcd_key)
@@ -113,10 +112,6 @@ void loop()
         break;
       }
     }
-  }
-  else if (setMode)
-  {
-    setReflowPoints();
   }
   else if (reflowMode)
   {
