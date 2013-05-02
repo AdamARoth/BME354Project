@@ -1,20 +1,16 @@
 void optionsPID()
 {
-
   //tell the PID to range between 0 and the full window size
   myPID.SetOutputLimits(0, setTime);
 
   //turn the PID on
   myPID.SetMode(AUTOMATIC);
-
 }
 
 void runPID()
 {
   val=analogRead(sensePin);
   currTemp = val * 0.00489 / 0.005;  //Converting the voltage of sensePin to current temp.
-
-  //displayTemp();
 
   double gap = abs(setTemp-currTemp); //distance away from setpoint
   if(gap<10)
@@ -41,7 +37,7 @@ void runPID()
   else digitalWrite(heaterPin,LOW);
 }
 
-void exitREFLOW()
+void endREFLOW()
 {
   if (elapsedTime > (timePt3 + 50))
   {
@@ -54,10 +50,21 @@ void exitREFLOW()
     lcd.setCursor(0,1);
     lcd.print("DONE! COOL DOWN!");
     delay(3000);
-    lcd.clear();
-    lcd.setCursor(0,0);
-    lcd.print("Exiting Reflow");
-    delay(3000);
-    reflowMode = false;
+    
+    exitREFLOW();
   }
+}
+
+void exitREFLOW()
+{
+  digitalWrite(heaterPin,LOW);
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("Exiting Reflow");
+  delay(2000);
+  reflowMode = false;
+  elapsedTime = 0; 
+  startTime = 0;
+  windowStartTime = 0;
+  now = 0;
 }
