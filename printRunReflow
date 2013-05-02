@@ -11,7 +11,7 @@ void printRunReflow()
   output.concat((int) currTemp);
   output.concat("C");
   output.concat(" ");
-  output.concat("00:00");
+  output.concat(timeDisplay());
   lcd.print(output);
 
   lcd.setCursor(0,1);
@@ -44,5 +44,29 @@ void printRunReflow()
   }
   lcd.print(output2);
   delay(1000);
+}
+
+
+
+String timeDisplay()
+{ 
+  String timeOutput = "";
+  int time = (timePt3+50)-(int) elapsedTime;
+  int timeMin = time/60;
+  int timeSec = time%60;
+  //Add zero to single digit of min
+  if(timeMin < 10)
+  {
+    timeOutput.concat("0"); 
   }
+  timeOutput.concat(timeMin);
+  timeOutput.concat(":");
+  //Add zero to single digit of sec
+  if(timeSec < 10)
+  {
+    timeOutput.concat("0");
+  }
+  timeOutput.concat(timeSec);
+  return timeOutput;
+
 }
