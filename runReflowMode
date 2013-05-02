@@ -1,0 +1,27 @@
+void runReflowMode()
+{
+  switch(read_LCD_buttons())
+  {
+    case(btnLEFT):
+    {
+      lcd.clear();
+      lcd.setCursor(0,0);
+      lcd.print("Exiting Reflow");
+      digitalWrite(heaterPin,LOW);
+      delay(2000);
+      reflowMode = false;
+      break;
+    }
+    case(btnNONE):
+    {
+      optionsPID();
+      setReflowCurve();
+      runPID();
+      exportMATLAB();
+      printRunReflow();
+      heatcont.heaterSafety(currTemp, setTemp,warnPoint,maxPoint);
+      exitREFLOW();
+      break;
+    }
+  }
+}
