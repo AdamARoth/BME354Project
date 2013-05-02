@@ -1,0 +1,19 @@
+//#define rxPin 0
+//#define txPin 1
+
+void exportMATLAB()
+{
+  if (Serial.available() > 0)
+  {
+    Serial.write(Serial.read());
+  }
+  //pinMode(rxPin, INPUT);
+  //pinMode(txPin, OUTPUT);
+  Serial.print(elapsedTime);
+  Serial.print("\t");
+  Serial.print(setTemp);
+  Serial.print("\t");
+  Serial.print(currTemp);
+  Serial.print("\t");
+  Serial.println();
+}
