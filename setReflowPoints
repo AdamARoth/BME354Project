@@ -262,9 +262,9 @@ boolean verifySelection()
   delay(2000);
   lcd.clear();
   lcd.setCursor(0,0);
-  lcd.print("Press SEL");
+  lcd.print("SEL: VERIFY");
   lcd.setCursor(0,1);
-  lcd.print("To Verify");
+  lcd.print("ANY BTN: RETURN");
   boolean notVerified = true;
   while(notVerified)
   {
@@ -287,4 +287,3 @@ boolean verifySelection()
     }
   }
 }
-
