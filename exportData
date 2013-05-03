@@ -1,15 +1,15 @@
 void exportData()
 {
   boolean continueExport = true;
-  memAccessIndex = 7;
+  byte memAccessIndex = 7;
   while(continueExport)
   { 
     elapsedTime = (int) (((memAccessIndex-1)/2)-3)*5; //Produces elapsed time in seconds
-    setTemp = (int) EEPROM.read(memAccessIndex)
-    currTemp = (int) EEPROM.read(memAccessIndex+1)
-    if(currTemp == 0 || setTemp == 0)
+    setTemp = (int) EEPROM.read(memAccessIndex);
+    currTemp = (int) EEPROM.read(memAccessIndex+1);
+    if(currTemp == 0 || setTemp == 0 || memAccessIndex+3 > 255)
     {
-      coninuteExport = false;
+      continueExport = false;
     }
     else
     {  
