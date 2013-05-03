@@ -53,7 +53,7 @@ void displayStats()
             run = false;
           }
           lcd.setCursor(0,0);
-          lcd.print("Press SEL: EXIT");
+          lcd.print("SEL: TO EXIT");
           break;
         }
       case btnSELECT:
