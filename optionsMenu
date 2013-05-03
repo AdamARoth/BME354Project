@@ -2,6 +2,7 @@ void optionsMenu()
 { 
   String options[optionsSize] = {
     "Set Reflow Pts",
+    "Export Data",
     "Display Stats",
     "Save New Default",
     "Restore Settings"      };
@@ -36,13 +37,17 @@ void optionsMenu()
       }
       else if(index == 1)
       {
-        displayStats();
+        exportData();
       }
       else if(index == 2)
       {
-        checkNewDefault();
+        displayStats();
       }
       else if(index == 3)
+      {
+        checkNewDefault();
+      }
+      else if(index == 4)
       {
         restoreDefaultSettings();
       }
