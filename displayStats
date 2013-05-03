@@ -43,7 +43,7 @@ void displayStats()
     boolean run = true;
     while(run)
     {
-      lcd_key = read_LCD_buttons();
+      int lcd_key = read_LCD_buttons();
       switch(lcd_key)
       {
       case btnNONE:
@@ -53,7 +53,7 @@ void displayStats()
             run = false;
           }
           lcd.setCursor(0,0);
-          lcd.print("  SEL: TO EXIT  ");
+          lcd.print("SEL: TO EXIT");
           break;
         }
       case btnSELECT:
