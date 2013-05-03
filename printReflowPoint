@@ -1,40 +1,40 @@
-void printReflowPoint(int dataSet,int time, int temp, int change) 
+void printReflowPoint(int dataSet,int time, int temp, int change)   // Display the Reflow points being set by the user in Set Reflow Mode
 {  
-   String output = "";
-   lcd.setCursor(0,0);
-   output.concat("Time Pt ");
-   output.concat(dataSet);
-   output.concat(" ");
-   if(change == 0) // Adds * to variable if being changed (0 if time, 1 if temp )
-   {
-     output.concat("*");
-   }
-   int timeMin = time/60;
-   int timeSec = time%60;
-   //Add zero to single digit of min
-    if(timeMin < 10)
-    {
-      output.concat("0"); 
-    }
-    output.concat(timeMin);
-    output.concat(":");
-    //Add zero to single digit of sec
-    if(timeSec < 10)
-    {
-      output.concat("0");
-    }
-    output.concat(timeSec);
-    lcd.print(output);
-    lcd.setCursor(0,1);
-    String output2 = "";
-    output2.concat("Temp Pt ");
-    output2.concat(dataSet);
-    output2.concat(" ");
-    if(change == 1)
-    {
-       output2.concat("*");
-    }
-    output2.concat(temp);
-    output2.concat(" C ");
-    lcd.print(output2);
+  String output = "";
+  lcd.setCursor(0,0);
+  output.concat("Time Pt ");
+  output.concat(dataSet);
+  output.concat(" ");
+  if(change == 0) // Adds * to variable if being changed (0 if time, 1 if temp )
+  {
+    output.concat("*");
+  }
+  int timeMin = time/60;
+  int timeSec = time%60;
+  //Add zero to single digit of min
+  if(timeMin < 10)
+  {
+    output.concat("0"); 
+  }
+  output.concat(timeMin);
+  output.concat(":");
+  //Add zero to single digit of sec
+  if(timeSec < 10)
+  {
+    output.concat("0");
+  }
+  output.concat(timeSec);
+  lcd.print(output);
+  lcd.setCursor(0,1);
+  String output2 = "";
+  output2.concat("Temp Pt ");
+  output2.concat(dataSet);
+  output2.concat(" ");
+  if(change == 1)
+  {
+    output2.concat("*");
+  }
+  output2.concat(temp);
+  output2.concat(" C ");
+  lcd.print(output2);
 }
