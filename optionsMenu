@@ -5,7 +5,7 @@ void optionsMenu()
     "Display Stats",
     "Save New Default",
     "Restore Settings"      };
-  intlcd_key = read_LCD_buttons();
+  int lcd_key = read_LCD_buttons();
   switch(lcd_key)
   {
   case btnDOWN:
