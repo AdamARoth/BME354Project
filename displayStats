@@ -9,7 +9,6 @@ void displayStats()
   delay(1000);
   if(maxPk == 0)
   {
-    
     lcd.setCursor(0,0);
     lcd.print("Previous Run");
     lcd.setCursor(0,1);
@@ -37,7 +36,7 @@ void displayStats()
     lcd.print("C");
     
     lcd.setCursor(7,1);
-    lcd.print("Err: ");
+    lcd.print(" Err: ");
     lcd.print((int) percentErr); //Rounds error to an int to allow display of percent sign
     lcd.print("%");
     delay(10000);
