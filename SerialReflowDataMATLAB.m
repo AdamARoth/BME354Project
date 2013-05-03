@@ -40,11 +40,4 @@ while s.BytesAvailable >= 0
     end
 end
 
-%% Calculate the R squared
-SSresid = sum((A(:,3) - A(:,2)).^2);
-SStotal = sum((A(:,3) - mean(A(:,3))).^2);
-r_2 = 1 - SSresid./SStotal
-
-text(105,230,['R^2 = ',num2str(r_2)],'FontSize',16)
-
 fclose(s);  % Close the Serial buffer
