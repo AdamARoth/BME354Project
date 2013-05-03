@@ -44,7 +44,7 @@ void runPID()
 
 void endREFLOW()  // Begins the End Reflow function sequence
 {
-  if (elapsedTime > (timePt3 + 50))
+  if (elapsedTime > (timePt3 + 20))
   {
     digitalWrite(heaterPin,LOW);    // Turn heater off when ending
     lcd.clear();
@@ -53,7 +53,7 @@ void endREFLOW()  // Begins the End Reflow function sequence
     lcd.print((int) currTemp);
     lcd.print("C");
     lcd.setCursor(0,1);
-    lcd.print("DONE! COOLING!");
+    lcd.print("REFLOW COMPLETE");
     delay(3000);
 
     exitREFLOW();    // Exit the Reflow Mode
