@@ -48,11 +48,13 @@ void displayStats()
       {
       case btnNONE:
         {
-            if(millis()-startLoopTime >= 10000)
-            {
-              run = false;
-            }
-            break;
+          if(millis()-startLoopTime >= 10000)
+          {
+            run = false;
+          }
+          lcd.setCursor(0,0);
+          lcd.print("Press SEL: EXIT");
+          break;
         }
       case btnSELECT:
         {
