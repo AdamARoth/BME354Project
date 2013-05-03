@@ -79,4 +79,5 @@ void exitREFLOW()    // Begins the EXIT Reflow sequence
   startTime = 0;
   windowStartTime = 0;
   now = 0;
+  memIndex = 7;
 }
