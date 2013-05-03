@@ -10,7 +10,7 @@ int read_LCD_buttons()   // Debounce of LCD buttons and Deciding which button wa
       return run2;    // output the correct button
     }
   }
-  return 5;
+  return btnNONE;
 }
 
 int read_LCD_buttonsHelp()    // Read in the voltage of the button press
