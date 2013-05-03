@@ -7,7 +7,7 @@ void exportData()
     elapsedTime = (((memAccessIndex-1)/2)-3)*5; //Produces elapsed time in seconds
     setTemp =  EEPROM.read(memAccessIndex);
     currTemp = EEPROM.read(memAccessIndex+1);
-    if(setTemp < minSetPoint || memAccessIndex+3 > 255)
+    if(memAccessIndex+3 > 255)
     {
       continueExport = false;
     }
