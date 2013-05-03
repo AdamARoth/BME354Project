@@ -5,7 +5,7 @@ void printReflowPoint(int dataSet,int time, int temp, int change)   // Display t
   output.concat("Time Pt ");
   output.concat(dataSet);
   output.concat(" ");
-  if(change == 0) // Adds * to variable if being changed (0 if time, 1 if temp )
+  if(change == 0) // Prints * next to the variable being changed (0 if time, 1 if temp )
   {
     output.concat("*");
   }
