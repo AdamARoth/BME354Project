@@ -1,4 +1,3 @@
-
 /* CPP Library for Safety Control of the Heater and LCD display.
  Crated by Tyler Hobbs, Adam Roth, Kavitha Prasanna, Alexa Choy
 */
