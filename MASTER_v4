@@ -23,12 +23,12 @@
 #define V4 504
 #define V5 741
 #define VNONE 1000
-#define optionsSize 4      //Define the number of optionsMenu choices
+#define optionsSize 5      //Define the number of optionsMenu choices
 #define heaterPin 2        //Digital pin that the heater oven connects
 #define sensePin 5         //Analog Thermocouple Temp-sensing pin that the temperature/voltage is read from
 #define debounceDelay 85   //Set the Debounce Delay Time
-#define variablesSize 6    //
-#define warnPoint 255      // Warning Temperature point - used by HeaterControl
+#define variablesSize 6    //Variable size of 3 Time and 3 Temperature points in Setting the Reflow Points
+#define warnPoint 260      // Warning Temperature point - used by HeaterControl
 #define maxPoint 280       // Maximum Temperature point - used by HeaterControl
 #define minSetPoint 80     //Define Min User Set Temp
 #define maxSetPoint 250    //Define Max User Set Temp
