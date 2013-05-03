@@ -33,15 +33,20 @@ void printRunReflow()      // Display the Reflow data (Current temp, Set temp, S
   {
     output2.concat(tempPt3);
     output2.concat("C");
-    output2.concat("   S3");
+    if (currTemp < 218)
+    {
+    output2.concat("   S3");  // 3rd STAGE - RAMP TO PEAK
+    }
+    else
+    {
+     output2.concat(" RFLW");  // REFLOW STAGE
+    }
   }
-  else if((elapsedTime >= (double) timePt3) && (elapsedTime <= (double) timePt3+50)) // REFLOW STAGE
+  else if((elapsedTime >= (double) timePt3) && (elapsedTime <= (double) timePt3+20)) // COOL DOWN STAGE
   {
-    output2.concat(tempPt3);
-    output2.concat("C");
-    output2.concat(" RFLW");
+    output2.concat("COOL DOWN");
   }
-  lcd.print(output2);    // Print the second line (set Temperature to the LCD
+  lcd.print(output2);    // Print the second line (set Temperature to the LCD)
   delay(500);
 }
 
@@ -49,7 +54,7 @@ void printRunReflow()      // Display the Reflow data (Current temp, Set temp, S
 String timerDisplay()  // Create the Reflow Timer
 { 
   String timerOutput = "";
-  int time = (timePt3+50)-(int) elapsedTime;
+  int time = (timePt3+20)-(int) elapsedTime;
   int timeMin = time/60;
   int timeSec = time%60;
   //Add zero to single digit of min
