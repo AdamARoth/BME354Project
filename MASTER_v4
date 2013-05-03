@@ -17,11 +17,11 @@
 #define btnLEFT 3
 #define btnSELECT 4
 #define btnNONE 5
-#define V1 95              //Define the voltages of the different buttons on pin A0
-#define V2 144
-#define V3 329
-#define V4 504
-#define V5 741
+#define V1 50              //Define the voltages of the different buttons on pin A0
+#define V2 195
+#define V3 380
+#define V4 555
+#define V5 790
 #define VNONE 1000
 #define optionsSize 5      //Define the number of optionsMenu choices
 #define heaterPin 2        //Digital pin that the heater oven connects
@@ -48,8 +48,8 @@ int memIndex = 7;                               //Keeps track of where the EEPRO
 //Define Reflow Temperature and Time Points
 int timePt1, timePt2, timePt3, tempPt1, tempPt2, tempPt3;
 //Define the aggressive and conservative PID Tuning Parameters
-double aggKp=12, aggKi=8, aggKd=2;
-double consKp=3, consKi=1.2, consKd=6;
+double aggKp=130, aggKi=4, aggKd=50;
+double consKp=100, consKi=2, consKd=40;
 
 // initialize the libraries and select the pins used on the LCD panel
 LiquidCrystal lcd(8, 9, 4, 5, 6, 7);
