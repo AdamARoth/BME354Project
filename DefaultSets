@@ -99,7 +99,7 @@ void restoreDefaultSettings()
   //Restore Default Reflow Points
   timePt1 = 150;
   timePt2 = 240;
-  timePt3 = 340;
+  timePt3 = 370;
   tempPt1 = 150;
   tempPt2 = 150;
   tempPt3 = 240;
