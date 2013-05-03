@@ -178,27 +178,27 @@ void setReflowPoints()  // Set the USER-DEFINED Reflow Time and Temperature Poin
         }
         if(index == 0)
         {
-          printReflowPoint(1,tempTime1,tempTemp1,0);
+          printReflowPoint(1,tempTime1,tempTemp1,0);  //Prints the reflow point
         }
         else if(index == 1)
         {
-          printReflowPoint(1,tempTime1,tempTemp1,1);
+          printReflowPoint(1,tempTime1,tempTemp1,1);  //Prints the reflow point
         }
         else if(index == 2)
         {
-          printReflowPoint(2,tempTime2,tempTemp2,0);
+          printReflowPoint(2,tempTime2,tempTemp2,0);  //Prints the reflow point
         }
         else if(index == 3)
         {
-          printReflowPoint(2,tempTime2,tempTemp2,1);
+          printReflowPoint(2,tempTime2,tempTemp2,1);  //Prints the reflow point
         }
         else if(index == 4)
         {
-          printReflowPoint(3,tempTime3,tempTemp3,0);
+          printReflowPoint(3,tempTime3,tempTemp3,0);  //Prints the reflow point
         }
         else
         {
-          printReflowPoint(3,tempTime3,tempTemp3,1);
+          printReflowPoint(3,tempTime3,tempTemp3,1);  //Prints the reflow point
         }
         break;
       }
