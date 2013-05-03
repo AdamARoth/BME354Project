@@ -3,27 +3,62 @@ void saveNewDefaultData()
   //Designed to only accept bytes as acceptable setpoints given range of data
   //This is fine given the system only allows the user to change the temp range 
   //by a given amount
-  //Writing to address 0 (Time Pt 1)
-  EEPROM.write(0,(byte)timePt1);
-  //Writing to address 1 (Time Pt 2 - Time Pt 1)
-  EEPROM.write(1,(byte)(timePt2-timePt1));
+  //Writing to address 0 (Time Pt 1) including size check
+  if(timePt1 > 255)
+  {
+     EEPROM.write(0,255);
+  }
+  else
+  {
+    EEPROM.write(0,(byte)timePt1);
+  }
+  //Writing to address 1 (Time Pt 2 - Time Pt 1) including size check
+  if(timePt2 - timePt1 > 255)
+  {
+     EEPROM.write(1,255);
+  }
+  else
+  {
+    EEPROM.write(1,(byte)(timePt2-timePt1));
+  }
   //Writing to address 2 (Time Pt 3 - Time Pt 2)
-  EEPROM.write(2,(byte)(timePt3-timePt2));
+ if(timePt3 - timePt2 > 255)
+ {
+    EEPROM.write(2,255);
+ }
+ else
+ {
+   EEPROM.write(2,(byte)(timePt3-timePt2));
+ }
   //Writing to address 3/4/5 (Temp Pt 1/2/3)
-  EEPROM.write(3,(byte)tempPt1);
-  EEPROM.write(4,(byte)tempPt2);
-  EEPROM.write(5,(byte)tempPt3);
-  //Indicator to tell if defaults ave been changed
-  EEPROM.write(6,(byte)1);
+ if(tempPt1 > 255)
+ {
+    EEPROM.write(3,255);
+ }
+ else
+ {
+    EEPROM.write(3,(byte)tempPt1);
+ }
+ if(tempPt2 > 255)
+ {
+    EEPROM.write(4,255);
+ }
+ else
+ {
+ EEPROM.write(4,(byte)tempPt2);
+ EEPROM.write(5,(byte)tempPt3);
+ //Indicator to tell if defaults ave been changed
+ EEPROM.write(6,(byte)1);
+ }
+ 
 }
-
 void checkNewDefault()
 {
   lcd.clear();
   lcd.setCursor(0,0);
-  lcd.print("Change Default?");
+  lcd.print("SEL:  Confirm");
   lcd.setCursor(0,1);
-  lcd.print("Press SEL if Y");
+  lcd.print("ANY:  Return");
   boolean run = true;
   while(run)
   {
@@ -47,9 +82,39 @@ void checkNewDefault()
     }
   }
 }
-
+void checkRestore()
+{
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print("SEL:  Confirm");
+  lcd.setCursor(0,1);
+  lcd.print("ANY:  Return");
+  boolean run = true;
+  while(run)
+  {
+    boolean check = read_LCD_buttons();
+    switch(check)
+    {
+      case(btnSELECT):
+      {
+        run = false;
+        restoreDefaultSettings();
+        break;
+      }
+      case(btnNONE):
+      {
+        break;
+      }
+    default:
+      {
+        run = false;
+      }
+    }
+  }
+}
 void restoreDefaultSettings()
 {
+  
   //Restore Default Reflow Points
     timePt1 = 150;
     timePt2 = 240;
