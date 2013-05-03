@@ -1,4 +1,3 @@
-
 void exportMATLAB()
 {
   if (Serial.available() > 0)
