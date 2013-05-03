@@ -15,6 +15,7 @@ void exportData()
     {  
       exportMATLAB();
     }
+    memAccessIndex = memAccessIndex + 2;
   }
   elapsedTime = 0;
 }
