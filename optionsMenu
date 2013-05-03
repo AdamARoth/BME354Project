@@ -2,11 +2,12 @@ void optionsMenu()
 { 
   String options[optionsSize] = {
     "Set Reflow Pts",
-    "Export Data",
+    "Run Reflow",
+    "Print Data",
     "Display Stats",
     "Save New Default",
-    "Restore Settings"      };
-  int lcd_key = read_LCD_buttons();
+    "Restore Settings"    };
+  lcd_key = read_LCD_buttons();
   switch(lcd_key)
   {
   case btnDOWN:
@@ -35,21 +36,25 @@ void optionsMenu()
       {
         setReflowPoints();
       }
-      else if(index == 1)
+      else if (index == 1)
       {
-        exportData();
+        reflowMode = true; 
       }
-      else if(index == 2)
+      else if (index == 2)
       {
-        displayStats();
+        // PRINT DATA 
       }
       else if(index == 3)
       {
-        checkNewDefault();
+        displayStats();
       }
       else if(index == 4)
       {
-        restoreDefaultSettings();
+        checkNewDefault();
+      }
+      else if(index == 5)
+      {
+        checkRestore();
       }
       optionsMode = false;
       break;
@@ -61,11 +66,6 @@ void optionsMenu()
       lcd.setCursor(0,1);
       lcd.print(options[index]);
       break;
-    }
-  case btnRIGHT:
-    {
-      optionsMode = false;
-      break; 
     }
   default:
     {
