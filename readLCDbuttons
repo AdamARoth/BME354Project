@@ -10,6 +10,7 @@ int read_LCD_buttons()
       return run2;    
     }
   }
+  return 5;
 }
 
 int read_LCD_buttonsHelp()
