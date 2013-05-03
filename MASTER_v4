@@ -76,7 +76,17 @@ void setup()
 
 void loop()
 {
-  if(!optionsMode && !reflowMode)    // Regular case - when NOT in optionsMenu, reflow, or setReflowPoints mode.
+  if (reflowMode)
+  {
+    runReflowMode();      // switch to running the reflow if reflowMode is true
+  }
+
+  else if (optionsMode)
+  {
+    optionsMenu();        // switch to the Options Menu if optionsMode is true
+  }
+
+  else   // Regular case - when NOT in optionsMenu or reflow mode.
   {
     int lcd_key = read_LCD_buttons();
     switch(lcd_key)
@@ -110,13 +120,5 @@ void loop()
         break;
       }
     }
-  }
-  else if (reflowMode)
-  {
-    runReflowMode();      // switch to running the reflow
-  }
-  else
-  {
-    optionsMenu();        // switch to the Options Menu
   }
 }
