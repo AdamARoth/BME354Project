@@ -29,39 +29,17 @@ void displayStats()
     lcd.setCursor(0,0);
     lcd.print("Desired Pk ");
     lcd.print(tempPt3);
+    lcd.print("C");
     
     lcd.setCursor(0,1);
     lcd.print("Pk ");
     lcd.print(maxPk);
+    lcd.print("C");
     
     lcd.setCursor(7,1);
-    lcd.print("Err ");
-    lcd.print((int)percentErr); //Rounds error to an int to allow display of percent sign
+    lcd.print("Err: ");
+    lcd.print((int) percentErr); //Rounds error to an int to allow display of percent sign
     lcd.print("%");
-    delay(500);
-    int startLoopTime = millis();
-    boolean run = true;
-    while(run)
-    {
-      int lcd_key = read_LCD_buttons();
-      switch(lcd_key)
-      {
-      case btnNONE:
-        {
-          if(millis()-startLoopTime >= 10000)
-          {
-            run = false;
-          }
-          lcd.setCursor(0,0);
-          lcd.print("SEL: TO EXIT");
-          break;
-        }
-      case btnSELECT:
-        {
-           run = false;
-           break;
-        }
-      }
-    }
+    delay(10000);
   }
 }
