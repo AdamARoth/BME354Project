@@ -148,7 +148,6 @@ void setReflowPoints()  // Set the USER-DEFINED Reflow Time and Temperature Poin
             tempPt2 = tempTemp2;
             tempPt3 = tempTemp3;
             select = false;
-            setMode = false;
             delay(400);
           }
         } 
