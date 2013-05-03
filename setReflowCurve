@@ -1,27 +1,27 @@
-void setReflowCurve()
+void setReflowCurve()    // Set the Temperature and Time values of the Reflow curve for the PID oven control to follow
 {
-  elapsedTime = ((double) now - (double) startTime)/1000;  // elapsed time in seconds!!!
-  
-  if(elapsedTime < (double) timePt1)
+  elapsedTime = ((double) now - (double) startTime)/1000;  // Total Elapsed Time in seconds!!!
+
+  if(elapsedTime < (double) timePt1)  // 1st STAGE - RAMP UP to SOAK
   {
     setTemp = (((double) tempPt1-(double) startTemp)/((double) timePt1 - 0))*((double) now - (double) windowStartTime)/1000 + (double) startTemp;
     setTime = (double) timePt1;
   }
-  else if((elapsedTime >= (double) timePt1) && (elapsedTime <= (double) timePt2))
+  else if((elapsedTime >= (double) timePt1) && (elapsedTime <= (double) timePt2))    // 2nd STAGE - SOAK 
   {
-    setTemp = (((double) tempPt2-(double) tempPt1)/((double) timePt2-(double) timePt1))*((double) now - (double) windowStartTime)/1000 + (double) tempPt1;
-    setTime = (double) timePt2;
+    setTemp = (((double) tempPt2-(double) tempPt1)/((double) timePt2-(double) timePt1))*(((double) now - (double) windowStartTime)/1000) + (double) tempPt1;
+    setTime = (double) timePt2 - (double) timePt1;
   }
-  else if((elapsedTime >= (double) timePt2) && (elapsedTime <= (double) timePt3))
+  else if((elapsedTime > (double) timePt2) && (elapsedTime < (double) timePt3))      // 3rd STAGE - RAMP TO PEAK
   {
-    setTemp = (((double) tempPt3-(double) tempPt2)/((double) timePt3-(double) timePt2))*((double) now - (double) windowStartTime)/1000 + (double) tempPt2;
-    setTime = (double) timePt3;
+    setTemp = (((double) tempPt3-(double) tempPt2)/((double) timePt3-(double) timePt2))*(((double) now - (double) windowStartTime)/1000) + (double) tempPt2;
+    setTime = (double) timePt3 - (double) timePt2;
   }
-  else if((elapsedTime >= (double) timePt3) && (elapsedTime <= (double) timePt3+50))
+  else if((elapsedTime >= (double) timePt3) && (elapsedTime <= (double) timePt3+50))   // REFLOW STAGE
   {
     setTemp = (double) tempPt3;
-    setTime = (double) timePt3 + 50;
-    }
+    setTime = ((double) timePt3 + 50) - (double) timePt3;
+  }
   else
   {
     setTemp = 0;
