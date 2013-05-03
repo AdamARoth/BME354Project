@@ -12,15 +12,15 @@ void setReflowCurve()    // Set the Temperature and Time values of the Reflow cu
     setTemp = (((double) tempPt2-(double) tempPt1)/((double) timePt2-(double) timePt1))*(((double) now - (double) windowStartTime)/1000) + (double) tempPt1;
     setTime = (double) timePt2 - (double) timePt1;
   }
-  else if((elapsedTime > (double) timePt2) && (elapsedTime < (double) timePt3))      // 3rd STAGE - RAMP TO PEAK
+  else if((elapsedTime > (double) timePt2) && (elapsedTime <= (double) timePt3))      // 3rd STAGE - RAMP TO PEAK and REFLOW
   {
     setTemp = (((double) tempPt3-(double) tempPt2)/((double) timePt3-(double) timePt2))*(((double) now - (double) windowStartTime)/1000) + (double) tempPt2;
     setTime = (double) timePt3 - (double) timePt2;
   }
-  else if((elapsedTime >= (double) timePt3) && (elapsedTime <= (double) timePt3+50))   // REFLOW STAGE
+  else if(elapsedTime > (double) timePt3)   // COOL DOWN STAGE
   {
-    setTemp = (double) tempPt3;
-    setTime = ((double) timePt3 + 50) - (double) timePt3;
+    setTemp = 0;
+    setTime = ((double) timePt3 + 20) - (double) timePt3;
   }
   else
   {
