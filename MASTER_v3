@@ -44,6 +44,7 @@ int startTemp;                                  //Start Temperature of the Reflo
 int val;                                        //Temporary value storing the thermocouple sense pin Voltage.
 int index = 0;                                  //index of options in menu
 int maxPk = 0;                                  //Initialize Max Peak as 0 before run occurs
+int memIndex = 7;
 //Define Reflow Temperature and Time Points
 int timePt1, timePt2, timePt3, tempPt1, tempPt2, tempPt3;
 //Define the aggressive and conservative PID Tuning Parameters
