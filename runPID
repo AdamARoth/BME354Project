@@ -15,6 +15,13 @@ void runPID()
   {
     maxPk = (int)currTemp;
   }
+  //Record run into EEPROM for later loading into computer
+  if(elapsedTime > (((memIndex-1)/2 - 3)*5000) && memIndex+1 <= 255)
+  {
+    EEPROM.write(memIndex,setTemp);
+    EEPROM.write(memIndex+1,currTemp);
+    memIndex = memIndex+2;
+  }
 
   double gap = abs(setTemp-currTemp);   //distance away from setpoint
   if(gap<10)
